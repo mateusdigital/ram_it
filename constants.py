@@ -1,13 +1,12 @@
-
 START_LEVEL = 1;
-START_LIVES = 3;
+START_LIVES = 1;
 
-GAME_STATE_PAUSED          = 0;
-GAME_STATE_PLAYING         = 1;
-GAME_STATE_VICTORY         = 3;
-GAME_STATE_DEFEAT          = 4;
-GAME_STATE_GAME_OVER       = 5;
-
+GAME_STATE_PAUSED        = 0;
+GAME_STATE_PLAYING       = 1;
+GAME_STATE_VICTORY       = 3;
+GAME_STATE_DEFEAT        = 4;
+GAME_STATE_GAME_OVER     = 5;
+GAME_STATE_SPLASH_SCREEN = 6;
 
 ################################################################################
 ## DIRECTION                                                                  ##
@@ -59,8 +58,8 @@ ENEMY_SPACING = 5;
 ENEMY_LEFT_SIDE  = 0;
 ENEMY_RIGHT_SIDE = 1;
 
-ENEMY_SHRINK_AMMOUNT = 105;
-ENEMY_GROW_AMMOUNT   = 50;
+ENEMY_SHRINK_AMMOUNT = 30;
+ENEMY_GROW_AMMOUNT   = 25;
 
 PLAYFIELD_TOP      = 100;
 PLAYFIELD_BOTTOM   = PLAYFIELD_TOP + ((ENEMY_HEIGHT * ENEMIES_COUNT / 2) + (ENEMY_SPACING * ENEMIES_COUNT / 2));
@@ -82,21 +81,19 @@ PROJECTILE_COLOR = (100, 100, 100);
 PROJECTILE_WIDTH  = 15;
 PROJECTILE_HEIGHT = 15
 PROJECTILE_SIZE   = (PROJECTILE_WIDTH, PROJECTILE_HEIGHT);
-PROJECTILE_SPEED  = 800;
+PROJECTILE_SPEED  = 1000;
 
 
 ################################################################################
 ## COLORS                                                                     ##
 ################################################################################
-COLOR_BLACK = (0, 0, 0);
-COLOR_RED   = (255, 0, 0);
-COLOR_GRAY  = (128, 128, 128);
-COLOR_WHITE = (255, 255, 255);
-
-COLOR_PIPE = (160, 160, 160);
+COLOR_TRANSPARENT = (0,0,0,0);
+COLOR_BLACK       = (0, 0, 0);
+COLOR_WHITE       = (255, 255, 255);
+COLOR_PIPE        = (160, 160, 160);
 
 import random;
-c = lambda x: (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255));
+c = lambda x: (random.randint(40, 255), random.randint(40, 255), random.randint(40, 255));
 ENEMY_COLOR_INDEX = map(c, range(0, 500));
 
 
@@ -105,3 +102,60 @@ ENEMY_COLOR_INDEX = map(c, range(0, 500));
 ################################################################################
 FONT_NAME = "nokiafc22.ttf";
 FONT_SIZE = 17;
+
+################################################################################
+## TIMER T                                                         ##
+################################################################################
+TIMER_ENEMY_BASE_TIME = 0.5;
+
+TIMER_THRESHOLD = [
+    #LEVEL 0 - UNUSED.
+    [-1000],
+
+    # LEVEL 1
+    [15, 10],
+    # LEVEL 2
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+    # COWTODO:
+    [20, 15, 10],
+]

@@ -5,14 +5,14 @@
 import pygame;
 from pygame.locals import *;
 ## Game_RamIt ##
-from constants        import *;
-from hud              import *;
-from input            import *;
-from player           import *;
-from playfield        import *;
-from projectile       import *;
-from enemy_manager    import *;
-from game_over_screen import *;
+from constants     import *;
+from hud           import *;
+from input         import *;
+from player        import *;
+from playfield     import *;
+from projectile    import *;
+from enemy_manager import *;
+from splash_screen import *;
 
 
 ################################################################################
@@ -23,7 +23,7 @@ class Globals:
     running      = False;
 
     ## Game Objects
-    gameover_screen = None;
+    splash_screen = None;
     playfield       = None;
     enemy_mgr       = None;
     player          = None;
@@ -33,7 +33,9 @@ class Globals:
     ## Game Status
     game_state = None;
     level      = START_LEVEL;
+    lives      = START_LIVES;
     score      = 0;
+
 
 
 ################################################################################
@@ -53,15 +55,15 @@ def game_init():
 
     ## Make the game running.
     Globals.running = True;
-    Globals.game_state = GAME_STATE_GAME_OVER;
+    Globals.game_state = GAME_STATE_SPLASH_SCREEN;
 
     ## Init the game objects
-    Globals.gameover_screen = GameOverScreen();
-    Globals.playfield       = Playfield   ();
-    Globals.enemy_mgr       = EnemyManager();
-    Globals.player          = Player      ();
-    Globals.projectile      = Projectile  ();
-    Globals.hud             = Hud         ();
+    Globals.splash_screen = SplashScreen ();
+    Globals.playfield     = Playfield    ();
+    Globals.enemy_mgr     = EnemyManager ();
+    Globals.player        = Player       ();
+    Globals.projectile    = Projectile   ();
+    Globals.hud           = Hud          ();
 
 
 ## Quit ########################################################################
@@ -106,14 +108,27 @@ def game_run():
 def _game_update(dt):
     Input.update();
 
-    if  (Globals.game_state == GAME_STATE_PLAYING   ): _game_update_playing  (dt);
-    elif(Globals.game_state == GAME_STATE_PAUSED    ): _game_update_paused   (dt);
-    elif(Globals.game_state == GAME_STATE_VICTORY   ): _game_update_victory  (dt);
-    elif(Globals.game_state == GAME_STATE_DEFEAT    ): _game_update_defeat   (dt);
-    elif(Globals.game_state == GAME_STATE_GAME_OVER ): _game_update_game_over(dt);
+    ## Playing
+    if(Globals.game_state == GAME_STATE_PLAYING):
+        _game_update_playing(dt);
+    ## Paused
+    elif(Globals.game_state == GAME_STATE_PAUSED):
+        _game_update_paused(dt);
+    ## Victory
+    elif(Globals.game_state == GAME_STATE_VICTORY):
+        _game_update_victory(dt);
+    ## Defeat
+    elif(Globals.game_state == GAME_STATE_DEFEAT):
+        _game_update_defeat(dt);
+    ## GameOver
+    elif(Globals.game_state == GAME_STATE_GAME_OVER):
+        _game_update_game_over(dt);
+    ## SplashScreen
+    elif(Globals.game_state == GAME_STATE_SPLASH_SCREEN):
+        _game_update_splash_screen(dt);
 
 
-## Update Playing ##############################################################
+#  Update Playing ##############################################################
 def _game_update_playing(dt):
     ## Check if player wants to pause.
     if(Input.is_click(K_p)):
@@ -166,8 +181,13 @@ def _game_update_defeat(dt):
 ## Update GameOver #############################################################
 def _game_update_game_over(dt):
     if(Input.is_click(K_SPACE)):
-        _game_change_state_gameover_to_playing();
+        _game_change_state_gameover_to_splash_screen();
 
+
+## Update SplashScreen #######################################################
+def _game_update_splash_screen(dt):
+    if(Input.is_click(K_SPACE)):
+        _game_change_state_splash_screen_to_playing();
 
 
 ################################################################################
@@ -178,8 +198,8 @@ def _game_draw():
     ## Clear
     Globals.draw_surface.fill(COLOR_BLACK);
 
-    if(Globals.game_state == GAME_STATE_GAME_OVER):
-        _game_draw_gameover();
+    if(Globals.game_state == GAME_STATE_SPLASH_SCREEN):
+        _game_draw_splash_screen();
     else:
         _game_draw_game();
 
@@ -188,9 +208,9 @@ def _game_draw():
 
 
 ## Draw Game Over ##############################################################
-def _game_draw_gameover():
+def _game_draw_splash_screen():
     Globals.playfield.draw(Globals.draw_surface, draw_pipe=False);
-    Globals.gameover_screen.draw(Globals.draw_surface);
+    Globals.splash_screen.draw(Globals.draw_surface);
 
 
 ## Draw Game ###################################################################
@@ -209,11 +229,13 @@ def _game_draw_game():
 ## Playing - Paused ############################################################
 def _game_change_state_playing_to_paused():
     log("GameStateChange: Playing -> Paused");
+
     Globals.game_state = GAME_STATE_PAUSED;
     Globals.hud.set_state(Globals.game_state);
 
 def _game_change_state_paused_to_playing():
     log("GameStateChange: Paused -> Playing");
+
     Globals.game_state = GAME_STATE_PLAYING;
     Globals.hud.set_state(Globals.game_state);
 
@@ -221,23 +243,31 @@ def _game_change_state_paused_to_playing():
 ## Playing - Defeat ############################################################
 def _game_change_state_playing_to_defeat():
     log("GameStateChange: Playing -> Defeat");
+
     Globals.game_state = GAME_STATE_DEFEAT;
     Globals.hud.set_state(Globals.game_state);
+    Globals.hud.set_lives(Globals.lives     );
+    Globals.projectile.kill();
 
 
 def _game_change_state_defeat_to_playing():
     log("GameStateChange: Defeat -> Playing");
+
     _game_reset();
 
 
 ## Playing - Victory ###########################################################
 def _game_change_state_playing_to_victory():
     log("GameStateChange: Playing -> Victory");
+
     Globals.game_state = GAME_STATE_VICTORY;
     Globals.hud.set_state(Globals.game_state);
+    Globals.projectile.kill();
+
 
 def _game_change_state_victory_to_playing():
     log("GameStateChange: Victory -> Playing");
+
     Globals.level += 1;
     _game_reset();
 
@@ -245,14 +275,27 @@ def _game_change_state_victory_to_playing():
 ## Playing - GameOver ##########################################################
 def _game_change_state_playing_to_gameover():
     log("GameStateChange: Playing -> Game Over");
+
     Globals.game_state = GAME_STATE_GAME_OVER;
     Globals.hud.set_state(Globals.game_state);
+    Globals.hud.set_lives(Globals.lives     );
+    Globals.projectile.kill();
 
-def _game_change_state_gameover_to_playing():
-    log("GameStateChange: GameOver -> Playing");
+
+## GameOver - SplashScreen #####################################################
+def _game_change_state_gameover_to_splash_screen():
+    log("GameStateChange : GameOver -> SplashScreen");
+    Globals.game_state = GAME_STATE_SPLASH_SCREEN;
+
+
+## SplashScreen - Playing ######################################################
+def _game_change_state_splash_screen_to_playing():
+    log("GameStateChange : SplashScreen -> Playing");
+
     Globals.level = START_LEVEL;
-    _game_reset();
+    Globals.lives = START_LIVES;
 
+    _game_reset();
 
 
 ################################################################################
@@ -263,13 +306,6 @@ def _game_check_status():
     enemies_alive     = Globals.enemy_mgr.get_alive_count        ();
     greater_width     = Globals.enemy_mgr.get_enemy_greater_width();
     reached_max_width = Globals.enemy_mgr.enemy_reached_max_width();
-    player_lives      = Globals.player.get_lives();
-
-    # log("Checking game Status");
-    # log("Enemies Alive     :", enemies_alive);
-    # log("Greater Width     :", greater_width);
-    # log("Reached Max Width :", reached_max_width);
-    # log("Player Lives      :", player_lives);
 
     ## Player kill every enemy - Victory.
     if(enemies_alive == 0):
@@ -280,9 +316,12 @@ def _game_check_status():
     if(not reached_max_width):
         return;
 
+    ## Descrement the lives...
+    Globals.lives -= 1;
+
     ## An enemy reached the max width and
     ## player had run out of lives - Game Over
-    if(player_lives == 0):
+    if(Globals.lives == 0):
         _game_change_state_playing_to_gameover();
         return;
 
@@ -295,9 +334,9 @@ def _game_check_status():
 def _game_reset():
     Globals.game_state = GAME_STATE_PLAYING;
 
-    Globals.hud.set_level(Globals.level             );
-    Globals.hud.set_state(Globals.game_state        );
-    Globals.hud.set_lives(Globals.player.get_lives());
+    Globals.hud.set_level(Globals.level     );
+    Globals.hud.set_state(Globals.game_state);
+    Globals.hud.set_lives(Globals.lives     );
 
     Globals.enemy_mgr.reset(Globals.level);
     Globals.projectile.kill();

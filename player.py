@@ -36,7 +36,6 @@ class Player:
         self.cannon_direction = DIRECTION_LEFT;
 
         ## HouseKeeping
-        self.lives        = START_LIVES;
         self.should_shoot = False;
 
 
@@ -58,8 +57,6 @@ class Player:
     def wants_to_shoot(self):
         return self.should_shoot;
 
-    def get_lives(self):
-        return self.lives;
 
     ############################################################################
     ## Update / Draw                                                          ##

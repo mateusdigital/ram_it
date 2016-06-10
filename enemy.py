@@ -5,6 +5,7 @@
 import random;
 ## Pygame ##
 import pygame;
+from pygame.locals import *;
 ## Game_RamIt
 from constants import *;
 from log       import *;
@@ -37,7 +38,8 @@ class Enemy:
                  enemy_side):
 
         ## Surface
-        self.surface = pygame.Surface((ENEMY_MAX_WIDTH, ENEMY_HEIGHT));
+        self.surface = pygame.Surface((ENEMY_MAX_WIDTH, ENEMY_HEIGHT),
+                                      flags=SRCALPHA);
 
         ## Position
         self.x = x;
@@ -112,7 +114,8 @@ class Enemy:
 
     ## Private methods #########################################################
     def _clear_surface(self):
-        self.surface.fill(COLOR_RED, (0, 0, ENEMY_MAX_WIDTH, ENEMY_HEIGHT));
+        self.surface.fill(COLOR_TRANSPARENT,
+                          (0, 0, ENEMY_MAX_WIDTH, ENEMY_HEIGHT));
 
     def _fill_surface(self):
         self._clear_surface();

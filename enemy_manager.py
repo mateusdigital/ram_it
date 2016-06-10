@@ -5,6 +5,7 @@ from enemy      import *;
 from projectile import *;
 from cowclock   import *;
 
+
 class EnemyManager:
     ############################################################################
     ## Init                                                                   ##
@@ -14,15 +15,16 @@ class EnemyManager:
         self.enemies    = [];
 
         ## Timers.
-        self.init_timer = None;
-        self.grow_timer = None;
+        self.init_timer               = None;
+        self.grow_timer               = None;
+        self.timer_speed_up_threshold = [];
 
         ## HouseKeeping.
-        self.level               = 0;
-        self.finished_init       = False;
-        self.enemies_alive_count = 0;
-        self.enemy_greater_width = 0;
-        self.enemies_total_width = 0;
+        self.level                    = 0;
+        self.finished_init            = False;
+        self.enemies_alive_count      = 0;
+        self.enemy_greater_width      = 0;
+        self.enemies_total_width      = 0;
 
 
         ## Init the timers
@@ -30,7 +32,8 @@ class EnemyManager:
                                    self._on_init_timer_tick,
                                    self._on_init_timer_done);
 
-        self.grow_timer = CowClock(0.5, CowClock.REPEAT_FOREVER,
+        self.grow_timer = CowClock(TIMER_ENEMY_BASE_TIME,
+                                   CowClock.REPEAT_FOREVER,
                                    self._on_grow_timer_tick);
 
 
@@ -51,17 +54,23 @@ class EnemyManager:
     def did_finished_init(self):
         return self.finished_init;
 
+
     ############################################################################
     ## Actions Methods                                                        ##
     ############################################################################
     ## Reset ###################################################################
     def reset(self, level):
+        ## Housekeeping....
         self.level         = level;
         self.finished_init = False;
 
         self.enemies_alive_count = ENEMIES_COUNT;
         self.enemy_greater_width = ENEMY_START_WIDTH;
         self.enemies_total_width = ENEMY_START_WIDTH * ENEMIES_COUNT;
+
+        ##Timers
+        self.grow_timer.set_time(TIMER_ENEMY_BASE_TIME);
+        self.timer_speed_up_threshold = TIMER_THRESHOLD[level];
 
         self.enemies = []; ## Reset all enemies.
 
@@ -117,6 +126,20 @@ class EnemyManager:
 
             if(enemy.is_alive()):
                 self.enemies_alive_count += 1;
+
+        ## Nothing to speed up...
+        if(len(self.timer_speed_up_threshold) == 0):
+            return;
+
+        if(self.enemies_alive_count == self.timer_speed_up_threshold[0]):
+            tick_time = self.grow_timer.get_time() - 0.05;
+            self.grow_timer.set_time(tick_time);
+            self.timer_speed_up_threshold.pop(0);
+
+            log("Speeding up grow timer");
+            log("Tick time : ", tick_time);
+            log("Thresholds: ", self.timer_speed_up_threshold);
+
 
 
     ## Draw ####################################################################
