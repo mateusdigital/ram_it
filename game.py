@@ -1,19 +1,19 @@
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
-## Python ##
-import random;
 ## Pygame ##
 import pygame;
 from pygame.locals import *;
 ## Game_RamIt ##
-from constants  import *;
-from playfield  import *;
-from player     import *;
-from projectile import *;
-from enemy      import *;
-from cowclock   import *;
-from text       import *;
+from constants        import *;
+from hud              import *;
+from input            import *;
+from player           import *;
+from playfield        import *;
+from projectile       import *;
+from enemy_manager    import *;
+from game_over_screen import *;
+
 
 ################################################################################
 ## Global vars                                                                ##
@@ -23,28 +23,17 @@ class Globals:
     running      = False;
 
     ## Game Objects
-    playfield  = None;
-    enemies    = [];
-    player     = None;
-    projectile = None;
-
-    ## Timers
-    enemy_init_timer = None;
-    enemy_grow_timer = None;
+    gameover_screen = None;
+    playfield       = None;
+    enemy_mgr       = None;
+    player          = None;
+    projectile      = None;
+    hud             = None;
 
     ## Game Status
-    game_state        = None;
-    total_enemy_width = 0;
-    total_enemy_alive = 0;
-
-    ## Texts
-    status_text = None;
-
-
-class Input:
-    prev_keys = None;
-    curr_keys = None;
-
+    game_state = None;
+    level      = START_LEVEL;
+    score      = 0;
 
 
 ################################################################################
@@ -54,28 +43,25 @@ class Input:
 def game_init():
     pygame.init();
 
+    # Init the Window.
     Globals.draw_surface;
     Globals.draw_surface = pygame.display.set_mode(GAME_WIN_SIZE);
     pygame.display.set_caption(GAME_WIN_CAPTION);
 
+    ## Init the Input.
+    Input.init();
+
+    ## Make the game running.
     Globals.running = True;
+    Globals.game_state = GAME_STATE_GAME_OVER;
 
-    ## Init the Game Objects.
-    _game_init_playfield  ();
-    _game_init_enemies    ();
-    _game_init_player     ();
-    _game_init_projectile ();
-
-    ## Init the Timers
-    _game_init_enemy_init_timer ();
-    _game_init_enemy_grow_timer ();
-
-    ## Init the Texts.
-    _game_init_status_text();
-
-    ## Start the timers.
-    Globals.enemy_init_timer.start();
-
+    ## Init the game objects
+    Globals.gameover_screen = GameOverScreen();
+    Globals.playfield       = Playfield   ();
+    Globals.enemy_mgr       = EnemyManager();
+    Globals.player          = Player      ();
+    Globals.projectile      = Projectile  ();
+    Globals.hud             = Hud         ();
 
 
 ## Quit ########################################################################
@@ -90,9 +76,15 @@ def game_run():
     while(Globals.running):
         frame_start = pygame.time.get_ticks();
 
-        _game_handle_events();
+        ## Handle window events...
+        for event in pygame.event.get():
+            if(event.type == pygame.locals.QUIT):
+                Globals.running = False;
+
+        ## Game Update
         _game_update(GAME_FRAME_SECS);
 
+        ## Keep the framerate tidy...
         frame_time = (pygame.time.get_ticks() - frame_start);
         if(frame_time < GAME_FRAME_MS):
             while(1):
@@ -102,255 +94,210 @@ def game_run():
         else:
             print "MISS FRAME";
 
+        ## Game Draw
         _game_draw();
 
 
 
 ################################################################################
-## Private Functions                                                          ##
+## Update Functions                                                           ##
 ################################################################################
 ## Update ######################################################################
 def _game_update(dt):
-    Globals.keys = pygame.key.get_pressed();
+    Input.update();
 
-    #Stuff that update regardless of the Game State.
-    Globals.enemy_init_timer.update(dt);
-    Globals.status_text.update     (dt);
-
-    if  (Globals.game_state == GAME_STATE_PLAYING  ) : _game_update_playing  (dt);
-    elif(Globals.game_state == GAME_STATE_PAUSED   ) : _game_update_paused   (dt);
-    elif(Globals.game_state == GAME_STATE_VICTORY  ) : _game_update_victory  (dt);
-    elif(Globals.game_state == GAME_STATE_DEFEAT   ) : _game_update_defeat   (dt);
-    elif(Globals.game_state == GAME_STATE_GAME_OVER) : _game_update_game_over(dt);
+    if  (Globals.game_state == GAME_STATE_PLAYING   ): _game_update_playing  (dt);
+    elif(Globals.game_state == GAME_STATE_PAUSED    ): _game_update_paused   (dt);
+    elif(Globals.game_state == GAME_STATE_VICTORY   ): _game_update_victory  (dt);
+    elif(Globals.game_state == GAME_STATE_DEFEAT    ): _game_update_defeat   (dt);
+    elif(Globals.game_state == GAME_STATE_GAME_OVER ): _game_update_game_over(dt);
 
 
+## Update Playing ##############################################################
 def _game_update_playing(dt):
-    #
-    player_dir   = DIRECTION_NONE;
-    cannon_dir   = Globals.player.get_cannon_direction();
-    should_shoot = False;
+    ## Check if player wants to pause.
+    if(Input.is_click(K_p)):
+        _game_change_state_playing_to_paused();
+        return;
 
-    ## Get the input...
-    if  (Globals.keys[K_UP  ]): player_dir = DIRECTION_UP;
-    elif(Globals.keys[K_DOWN]): player_dir = DIRECTION_DOWN;
+    Globals.enemy_mgr.update(dt);
+    if(not Globals.enemy_mgr.did_finished_init()):
+        return;
 
-    if  (Globals.keys[K_LEFT ]): cannon_dir = DIRECTION_LEFT;
-    elif(Globals.keys[K_RIGHT]): cannon_dir = DIRECTION_RIGHT;
+    Globals.player.update(dt);
 
-    if(Globals.keys[K_SPACE]): should_shoot = True;
+    ## Restart the Projectile if needed.
+    if(Globals.projectile.is_alive() == False and Globals.player.wants_to_shoot()):
+        cannon_pos = Globals.player.get_cannon_position ();
+        cannon_dir = Globals.player.get_cannon_direction();
 
-    #Update Player movement and cannon direction.
-    Globals.player.change_movement_direction(player_dir);
-    Globals.player.change_cannon_direction  (cannon_dir);
-
-    #Restart the Projectile if needed.
-    if(Globals.projectile.is_alive() == False and should_shoot):
-        cannon_pos = Globals.player.get_cannon_position();
         Globals.projectile.restart(cannon_pos[0], cannon_pos[1], cannon_dir);
 
-
-    #Update the game objects and timers.
-    Globals.enemy_grow_timer.update(dt);
-
-    Globals.player.update    (dt);
     Globals.projectile.update(dt);
+    hit = Globals.enemy_mgr.check_collision(Globals.projectile);
+
+    ## If player hit an enemy, increment the score...
+    if(hit):
+        Globals.score += 1;
+        Globals.hud.set_score(Globals.score);
+
+    _game_check_status();
 
 
-    #Update the game state.
-    _game_check_collisions();
-    _game_check_status    ();
 
-
-
+## Update Paused ###############################################################
 def _game_update_paused(dt):
-    ##COWTODO: Handle the pause state.
-    pass;
+    if(Input.is_click(K_p)):
+        _game_change_state_paused_to_playing();
 
+
+## Update Victory ##############################################################
 def _game_update_victory(dt):
-    ##COWTODO: Handle the victory state.
-    pass;
+    if(Input.is_click(K_SPACE)):
+        _game_change_state_victory_to_playing();
 
+
+## Update Defeat ###############################################################
 def _game_update_defeat(dt):
-    ##COWTODO: Handle the defeat state.
-    pass;
+    if(Input.is_click(K_SPACE)):
+        _game_change_state_defeat_to_playing();
 
+
+## Update GameOver #############################################################
 def _game_update_game_over(dt):
-    ##COWTODO: Handle the game over state.
-    pass;
+    if(Input.is_click(K_SPACE)):
+        _game_change_state_gameover_to_playing();
 
 
 
-def _game_change_status_text():
-    if(Globals.game_state == GAME_STATE_VICTORY):
-        Globals.status_text.set_contents("- VICTORY -");
-        Globals.status_text.set_blinking(True);
-
-    elif(Globals.game_state == GAME_STATE_DEFEAT):
-        Globals.status_text.set_contents("- DEFEAT -");
-        Globals.status_text.set_blinking(True);
-
-    else:
-        Globals.status_text.set_contents("Score: 23");
-        Globals.status_text.set_blinking(False);
-
-
+################################################################################
+## Draw Functions                                                             ##
+################################################################################
 ## Draw ########################################################################
 def _game_draw():
     ## Clear
-    Globals.draw_surface.fill((0, 0, 0));
+    Globals.draw_surface.fill(COLOR_BLACK);
 
-    ## Draw the game objects.
-    Globals.playfield.draw(Globals.draw_surface);
-
-    for enemy in Globals.enemies:
-        enemy.draw(Globals.draw_surface);
-
-    Globals.player.draw    (Globals.draw_surface);
-    Globals.projectile.draw(Globals.draw_surface);
-
-    Globals.status_text.draw(Globals.draw_surface);
+    if(Globals.game_state == GAME_STATE_GAME_OVER):
+        _game_draw_gameover();
+    else:
+        _game_draw_game();
 
     ## Render
     pygame.display.update();
 
 
-## Handle Events ###############################################################
-def _game_handle_events():
-    for event in pygame.event.get():
-        if(event.type == pygame.locals.QUIT):
-            Globals.running = False;
+## Draw Game Over ##############################################################
+def _game_draw_gameover():
+    Globals.playfield.draw(Globals.draw_surface, draw_pipe=False);
+    Globals.gameover_screen.draw(Globals.draw_surface);
 
 
-## Check Collisons #############################################################
-def _game_check_collisions():
-    ## Projectile is not active - Nothing to do...
-    if(not Globals.projectile.is_alive()):
-        return;
-
-    projectile_hit_box = Globals.projectile.get_hit_box();
-
-    for enemy in Globals.enemies:
-        ## Enemy is already dead...
-        if(not enemy.is_alive()):
-            continue;
-
-        if(enemy.check_collision(projectile_hit_box)):
-            enemy.shrink(ENEMY_SHRINK_AMMOUNT);
-            Globals.projectile.kill();
-
-            return;
+## Draw Game ###################################################################
+def _game_draw_game():
+    ## Draw the game objects.
+    Globals.playfield.draw  (Globals.draw_surface);
+    Globals.enemy_mgr.draw  (Globals.draw_surface);
+    Globals.player.draw     (Globals.draw_surface);
+    Globals.projectile.draw (Globals.draw_surface);
+    Globals.hud.draw        (Globals.draw_surface);
 
 
+################################################################################
+## State Management                                                           ##
+################################################################################
+## Playing - Paused ############################################################
+def _game_change_state_playing_to_paused():
+    log("GameStateChange: Playing -> Paused");
+    Globals.game_state = GAME_STATE_PAUSED;
+    Globals.hud.set_state(Globals.game_state);
+
+def _game_change_state_paused_to_playing():
+    log("GameStateChange: Paused -> Playing");
+    Globals.game_state = GAME_STATE_PLAYING;
+    Globals.hud.set_state(Globals.game_state);
+
+
+## Playing - Defeat ############################################################
+def _game_change_state_playing_to_defeat():
+    log("GameStateChange: Playing -> Defeat");
+    Globals.game_state = GAME_STATE_DEFEAT;
+    Globals.hud.set_state(Globals.game_state);
+
+
+def _game_change_state_defeat_to_playing():
+    log("GameStateChange: Defeat -> Playing");
+    _game_reset();
+
+
+## Playing - Victory ###########################################################
+def _game_change_state_playing_to_victory():
+    log("GameStateChange: Playing -> Victory");
+    Globals.game_state = GAME_STATE_VICTORY;
+    Globals.hud.set_state(Globals.game_state);
+
+def _game_change_state_victory_to_playing():
+    log("GameStateChange: Victory -> Playing");
+    Globals.level += 1;
+    _game_reset();
+
+
+## Playing - GameOver ##########################################################
+def _game_change_state_playing_to_gameover():
+    log("GameStateChange: Playing -> Game Over");
+    Globals.game_state = GAME_STATE_GAME_OVER;
+    Globals.hud.set_state(Globals.game_state);
+
+def _game_change_state_gameover_to_playing():
+    log("GameStateChange: GameOver -> Playing");
+    Globals.level = START_LEVEL;
+    _game_reset();
+
+
+
+################################################################################
+## Game Helper Functions                                                      ##
+################################################################################
 ## Check Status ################################################################
 def _game_check_status():
-    Globals.total_enemy_alive = ENEMIES_COUNT;
-    Globals.total_enemy_width = 0;
+    enemies_alive     = Globals.enemy_mgr.get_alive_count        ();
+    greater_width     = Globals.enemy_mgr.get_enemy_greater_width();
+    reached_max_width = Globals.enemy_mgr.enemy_reached_max_width();
+    player_lives      = Globals.player.get_lives();
 
-    for enemy in Globals.enemies:
-        if(not enemy.is_alive()):
-            Globals.total_enemy_alive -= 1;
-            continue;
+    # log("Checking game Status");
+    # log("Enemies Alive     :", enemies_alive);
+    # log("Greater Width     :", greater_width);
+    # log("Reached Max Width :", reached_max_width);
+    # log("Player Lives      :", player_lives);
 
-        if(enemy.is_max_width()):
-            Globals.game_state = GAME_STATE_DEFEAT;
-            break;
-
-        Globals.total_enemy_width += enemy.get_width();
-
-    if(Globals.total_enemy_alive == 0):
-        Globals.game_state = GAME_STATE_VICTORY;
-
-    _game_change_status_text();
-
-
-################################################################################
-## Inits                                                                      ##
-################################################################################
-## Playfield ###################################################################
-def _game_init_playfield():
-    Globals.playfield = Playfield();
-
-
-## Enemy #######################################################################
-def _game_init_enemies():
-    Globals.enemies = [];
-
-    Globals.total_enemy_alive = ENEMIES_COUNT;
-    Globals.game_state        = GAME_STATE_INITING_ENEMIES;
-
-
-
-## Player ######################################################################
-def _game_init_player():
-    Globals.player = Player(min_y   = PLAYFIELD_TOP,
-                            max_y   = PLAYFIELD_BOTTOM,
-                            start_x = PLAYER_START_X);
-
-
-## Projectile ##################################################################
-def _game_init_projectile():
-    Globals.projectile = Projectile(min_x = PLAYFIELD_LEFT,
-                                    max_x = PLAYFIELD_RIGHT);
-
-
-## Enemy Init Timer ############################################################
-def _game_init_enemy_init_timer():
-    Globals.enemy_init_timer = CowClock(0.03, ENEMIES_COUNT,
-                                        _game_on_enemy_init_timer_tick,
-                                        _game_on_enemy_init_timer_done);
-
-
-## Enemy Grow Timer ############################################################
-def _game_init_enemy_grow_timer():
-    Globals.enemy_grow_timer = CowClock(0.1,
-                                        CowClock.REPEAT_FOREVER,
-                                        _game_on_enemy_grow_timer_tick,
-                                        None);
-
-
-## Status Text #################################################################
-def _game_init_status_text():
-    Globals.status_text = Text("nokiafc22.ttf", 22,
-                                100,
-                                100,
-                                "- PAUSED -");
-
-
-
-
-
-
-################################################################################
-## Timer Callbacks                                                            ##
-################################################################################
-## Enemy Init ##################################################################
-def _game_on_enemy_init_timer_tick():
-    if(Globals.game_state != GAME_STATE_INITING_ENEMIES):
+    ## Player kill every enemy - Victory.
+    if(enemies_alive == 0):
+        _game_change_state_playing_to_victory();
         return;
 
-    enemies_count = len(Globals.enemies);
-    enemy_side    = ENEMY_LEFT_SIDE;
-    enemy_index   = enemies_count;
+    ## Any enemy had reached the max width - Continue
+    if(not reached_max_width):
+        return;
 
-    if(enemies_count >= ENEMIES_LEFT_COUNT):
-        enemy_side   = ENEMY_RIGHT_SIDE;
-        enemy_index -= (ENEMIES_LEFT_COUNT);
+    ## An enemy reached the max width and
+    ## player had run out of lives - Game Over
+    if(player_lives == 0):
+        _game_change_state_playing_to_gameover();
+        return;
 
-    Globals.enemies.append(Enemy_Factory(enemy_side, enemy_index));
+    ## An enemy reached the max width
+    ##  but player has lives yet - Defeat
+    _game_change_state_playing_to_defeat();
 
 
-def _game_on_enemy_init_timer_done():
+## Reset #######################################################################
+def _game_reset():
     Globals.game_state = GAME_STATE_PLAYING;
-    Globals.enemy_grow_timer.start();
 
+    Globals.hud.set_level(Globals.level             );
+    Globals.hud.set_state(Globals.game_state        );
+    Globals.hud.set_lives(Globals.player.get_lives());
 
-## Enemy Grow ##################################################################
-def _game_on_enemy_grow_timer_tick():
-    if(Globals.game_state != GAME_STATE_PLAYING):
-        return;
-
-    while(True):
-        index = random.randint(0, len(Globals.enemies) -1);
-        if(Globals.enemies[index].get_width() > 0):
-            Globals.enemies[index].grow(ENEMY_GROW_AMMOUNT);
-            return;
+    Globals.enemy_mgr.reset(Globals.level);
+    Globals.projectile.kill();

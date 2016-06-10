@@ -38,7 +38,8 @@ class Playfield:
         self.pipe_surface.fill(COLOR_PIPE);
 
     ## Draw ####################################################################
-    def draw(self, surface):
+    def draw(self, surface, draw_pipe=True):
         surface.blit(self.top_surface,    self.top_pos   );
         surface.blit(self.bottom_surface, self.bottom_pos);
-        surface.blit(self.pipe_surface,   self.pipe_pos  );
+        if(draw_pipe):
+            surface.blit(self.pipe_surface, self.pipe_pos);

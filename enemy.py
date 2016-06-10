@@ -1,39 +1,13 @@
 ################################################################################
 ##                                                          ##
 ################################################################################
+## Python ##
+import random;
 ## Pygame ##
 import pygame;
 ## Game_RamIt
 from constants import *;
 from log       import *;
-
-
-ENEMY_COLOR_INDEX = [
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-    (255, 0, 255),
-    (123, 12, 212),
-    (12, 233, 23),
-];
 
 
 def Enemy_Factory(side, index):
@@ -48,7 +22,7 @@ def Enemy_Factory(side, index):
     return Enemy(x = enemy_x,
                  y = enemy_y,
                  start_width = ENEMY_START_WIDTH,
-                 color_index = index,
+                 color_index = random.randint(0, len(ENEMY_COLOR_INDEX) -1),
                  enemy_side  = side);
 
 
@@ -79,7 +53,6 @@ class Enemy:
         ## Complete the initialization.
         if(enemy_side == ENEMY_RIGHT_SIDE):
             self.x -= ENEMY_MAX_WIDTH;
-            self.color_index += 1;
 
         self.grow(0);
 
@@ -102,7 +75,7 @@ class Enemy:
 
     ## Actions #################################################################
     def grow(self, ammount):
-        if(self.width <= 0):
+        if(self.width <= 0 or self.width >= ENEMY_MAX_WIDTH):
             return;
 
         self.width += ammount;
@@ -110,7 +83,7 @@ class Enemy:
 
 
     def shrink(self, ammount):
-        if(self.width <= 0):
+        if(self.width <= 0 or self.width >= ENEMY_MAX_WIDTH):
             return;
 
         self.width -= ammount;

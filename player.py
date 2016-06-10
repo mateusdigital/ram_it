@@ -1,13 +1,18 @@
+## Pygame ##
 import pygame;
+from pygame.locals import *;
+## Game_RamIt ##
 from constants import *;
-
+from input     import *;
 
 ################################################################################
 ##                                                          ##
 ################################################################################
 class Player:
-    ## Init ####################################################################
-    def __init__(self, min_y, max_y, start_x):
+    ############################################################################
+    ## Init                                                                   ##
+    ############################################################################
+    def __init__(self):
         #Surface
         self.left_surface  = pygame.image.load("cannon.png");
         self.right_surface = pygame.transform.flip(self.left_surface, True, False);
@@ -17,22 +22,52 @@ class Player:
         self.width  = self.surface.get_width ();
         self.height = self.surface.get_height();
 
-        self.x = start_x - (self.width / 2);
-        self.y = 0;
+        self.x = PLAYER_START_X - (self.width / 2);
+        self.y = (PLAYFIELD_TOP + (PLAYFIELD_BOTTOM - self.height)) / 2;
 
         ## Movement
         self.speed = 0;
 
-        self.min_y = min_y;
-        self.max_y = max_y - self.height;
+        self.min_y = PLAYFIELD_TOP;
+        self.max_y = PLAYFIELD_BOTTOM - self.height;
 
         ## Cannon
         self.cannon_offset    = (self.width / 2, self.height / 2);
         self.cannon_direction = DIRECTION_LEFT;
 
+        ## HouseKeeping
+        self.lives        = START_LIVES;
+        self.should_shoot = False;
 
-    ## Update / Draw ###########################################################
+
+    ############################################################################
+    ## Getters                                                                ##
+    ############################################################################
+    def get_cannon_direction(self):
+        return self.cannon_direction;
+
+    def get_cannon_position(self):
+        #COWTODO: Fix this logic...
+        if(self.cannon_direction == DIRECTION_LEFT):
+            return (self.x - (self.width / 2 + PLAYER_CANNON_X_OFFSET),
+                    self.y + 4);
+        else:
+            return (self.x + (self.width / 2 + (PLAYER_CANNON_X_OFFSET + 10)),
+                    self.y + 4);
+
+    def wants_to_shoot(self):
+        return self.should_shoot;
+
+    def get_lives(self):
+        return self.lives;
+
+    ############################################################################
+    ## Update / Draw                                                          ##
+    ############################################################################
+    ## Update ##################################################################
     def update(self, dt):
+        self._get_input();
+
         self.y += (self.speed * dt);
 
         ## Maintain the player into bounds.
@@ -40,17 +75,17 @@ class Player:
         elif(self.y >= self.max_y): self.y = self.max_y;
 
 
+    ## Draw ####################################################################
     def draw(self, surface):
         surface.blit(self.surface, (self.x, self.y));
 
 
-    ## #########################################################################
-    def change_movement_direction(self, direction):
-        self.speed = (direction * PLAYER_SPEED);
 
-
+    ############################################################################
+    ## Private Methods                                                        ##
+    ############################################################################
     ## Cannon Direction ########################################################
-    def change_cannon_direction(self, direction):
+    def _set_cannon_dir(self, direction):
         ## Same direction - Dont need do anything...
         if(self.cannon_direction == direction):
             return;
@@ -66,16 +101,19 @@ class Player:
             self.surface = self.right_surface;
             self.x += PLAYER_CANNON_X_OFFSET;
 
-    def get_cannon_direction(self):
-        return self.cannon_direction;
 
+    ## Input ###################################################################
+    def _get_input(self):
+        self.speed = 0;
 
-    ## Cannon Position #########################################################
-    def get_cannon_position(self):
-        #COWTODO: Fix this logic...
-        if(self.cannon_direction == DIRECTION_LEFT):
-            return (self.x - (self.width / 2 + PLAYER_CANNON_X_OFFSET),
-                    self.y + 4);
-        else:
-            return (self.x + (self.width / 2 + (PLAYER_CANNON_X_OFFSET + 10)),
-                    self.y + 4);
+        ## Movement
+        if  (Input.is_down(K_UP  )): self.speed = -PLAYER_SPEED;
+        elif(Input.is_down(K_DOWN)): self.speed = +PLAYER_SPEED;
+
+        ## Cannon
+        if  (Input.is_down(K_LEFT )): self._set_cannon_dir(DIRECTION_LEFT );
+        elif(Input.is_down(K_RIGHT)): self._set_cannon_dir(DIRECTION_RIGHT);
+
+        ## Shoot
+        self.should_shoot = Input.is_down(K_SPACE);
+
