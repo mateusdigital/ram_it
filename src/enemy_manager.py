@@ -1,9 +1,13 @@
+################################################################################
+## Imports                                                                    ##
+################################################################################
 ## Python ##
 import random;
 ## Game_RamIt ##
 from enemy      import *;
 from projectile import *;
 from cowclock   import *;
+
 
 
 class EnemyManager:
@@ -35,8 +39,6 @@ class EnemyManager:
         self.grow_timer = CowClock(TIMER_ENEMY_BASE_TIME,
                                    CowClock.REPEAT_FOREVER,
                                    self._on_grow_timer_tick);
-
-
 
 
     ############################################################################
@@ -139,7 +141,6 @@ class EnemyManager:
             log("Speeding up grow timer");
             log("Tick time : ", tick_time);
             log("Thresholds: ", self.timer_speed_up_threshold);
-
 
 
     ## Draw ####################################################################

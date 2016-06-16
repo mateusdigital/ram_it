@@ -1,9 +1,12 @@
-
+################################################################################
+## Imports                                                                    ##
+################################################################################
 ## Pygame ##
 import pygame;
 ## Game_RamIt ##
 from constants import *;
 from text      import *;
+
 
 
 class SplashScreen:
@@ -37,6 +40,10 @@ class SplashScreen:
         self._help_text.set_position(PLAYFIELD_CENTER_X - (size[0] / 2),
                                      GAME_WIN_HEIGHT - size[1] - 10);
 
+
+    ############################################################################
+    ## Update / Draw                                                          ##
+    ############################################################################
     def update(self, dt):
         pass;
 
