@@ -3,7 +3,10 @@
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
+## Python ##
+import sys;
 ## Game_RamIt ##
+import assets;
 from game import *;
 
 
@@ -11,6 +14,9 @@ from game import *;
 ## Script initialization                                                      ##
 ################################################################################
 if __name__ == '__main__':
+    if(len(sys.argv) > 1):
+        assets.set_search_path(sys.argv[1]);
+
     game_init();
     game_run ();
     game_quit();

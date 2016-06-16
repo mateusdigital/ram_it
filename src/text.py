@@ -4,6 +4,7 @@
 ## Pygame ##
 import pygame;
 ## Game_RamIt ##
+import assets;
 from constants import *;
 from cowclock  import *;
 
@@ -19,7 +20,7 @@ class Text:
                  contents = "",
                  color    = COLOR_WHITE):
         ## Font
-        self.font = pygame.font.Font(font_name, font_size);
+        self.font = assets.load_font(font_name, font_size);
 
         ## Contents
         self.contents = contents;

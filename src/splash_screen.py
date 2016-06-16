@@ -4,6 +4,7 @@
 ## Pygame ##
 import pygame;
 ## Game_RamIt ##
+import assets;
 from constants import *;
 from text      import *;
 
@@ -14,12 +15,12 @@ class SplashScreen:
     ## Init                                                                   ##
     ############################################################################
     def __init__(self):
-        self._ram_it_logo      = pygame.image.load("RamIt_Logo.png");
+        self._ram_it_logo      = assets.load_image("RamIt_Logo.png");
         self._ram_it_logo_size = self._ram_it_logo.get_size();
         self._ram_it_logo_pos  = (PLAYFIELD_CENTER_X - (self._ram_it_logo_size[0] / 2),
                                   PLAYFIELD_TOP + 20);
 
-        self._logo      = pygame.image.load("AmazingCow_Logo.png");
+        self._logo      = assets.load_image("AmazingCow_Logo.png");
         self._logo_size = self._logo.get_size();
         self._logo_pos  = (PLAYFIELD_CENTER_X - (self._logo_size[0] / 2),
                            self._ram_it_logo_pos [1] +

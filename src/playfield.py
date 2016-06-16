@@ -4,6 +4,7 @@
 ## Pygame ##
 import pygame;
 ## Game_RamIt
+import assets;
 from constants import *;
 
 
@@ -16,7 +17,7 @@ class Playfield:
         pipe_size = (8, PLAYFIELD_BOTTOM - PLAYFIELD_TOP + ENEMY_SPACING);
 
         ## Surface
-        self.top_surface    = pygame.image.load("playfield_top.png");
+        self.top_surface    = assets.load_image("playfield_top.png");
         self.bottom_surface = pygame.transform.flip(self.top_surface, False, True);
         self.pipe_surface   = pygame.Surface(pipe_size);
 

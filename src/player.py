@@ -5,6 +5,7 @@
 import pygame;
 from pygame.locals import *;
 ## Game_RamIt ##
+import assets;
 from constants import *;
 from input     import *;
 
@@ -16,7 +17,7 @@ class Player:
     ############################################################################
     def __init__(self):
         #Surface
-        self.left_surface  = pygame.image.load("cannon.png");
+        self.left_surface  = assets.load_image("cannon.png");
         self.right_surface = pygame.transform.flip(self.left_surface, True, False);
         self.surface       = self.left_surface;
 
