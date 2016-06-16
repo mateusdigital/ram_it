@@ -5,7 +5,6 @@
 import pygame;
 ## Game_RamIt
 from constants import *;
-from log       import *;
 
 
 

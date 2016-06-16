@@ -138,10 +138,6 @@ class EnemyManager:
             self.grow_timer.set_time(tick_time);
             self.timer_speed_up_threshold.pop(0);
 
-            log("Speeding up grow timer");
-            log("Tick time : ", tick_time);
-            log("Thresholds: ", self.timer_speed_up_threshold);
-
 
     ## Draw ####################################################################
     def draw(self, surface):

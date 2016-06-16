@@ -5,7 +5,6 @@
 import pygame;
 ## Game_RamIt ##
 from constants import *;
-from log       import *;
 
 
 
@@ -47,8 +46,6 @@ class Projectile:
     ## Actions                                                                ##
     ############################################################################
     def restart(self, pos_x, pos_y, dir):
-        # log("self_restart");
-
         self.alive = True;
 
         self.y = pos_y;
@@ -58,7 +55,6 @@ class Projectile:
 
 
     def kill(self):
-        # log("self_kill");
         self.alive = False;
 
 

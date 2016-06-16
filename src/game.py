@@ -229,22 +229,16 @@ def _game_draw_game():
 ################################################################################
 ## Playing - Paused ############################################################
 def _game_change_state_playing_to_paused():
-    log("GameStateChange: Playing -> Paused");
-
     Globals.game_state = GAME_STATE_PAUSED;
     Globals.hud.set_state(Globals.game_state);
 
 def _game_change_state_paused_to_playing():
-    log("GameStateChange: Paused -> Playing");
-
     Globals.game_state = GAME_STATE_PLAYING;
     Globals.hud.set_state(Globals.game_state);
 
 
 ## Playing - Defeat ############################################################
 def _game_change_state_playing_to_defeat():
-    log("GameStateChange: Playing -> Defeat");
-
     Globals.game_state = GAME_STATE_DEFEAT;
     Globals.hud.set_state(Globals.game_state);
     Globals.hud.set_lives(Globals.lives     );
@@ -252,31 +246,23 @@ def _game_change_state_playing_to_defeat():
 
 
 def _game_change_state_defeat_to_playing():
-    log("GameStateChange: Defeat -> Playing");
-
     _game_reset();
 
 
 ## Playing - Victory ###########################################################
 def _game_change_state_playing_to_victory():
-    log("GameStateChange: Playing -> Victory");
-
     Globals.game_state = GAME_STATE_VICTORY;
     Globals.hud.set_state(Globals.game_state);
     Globals.projectile.kill();
 
 
 def _game_change_state_victory_to_playing():
-    log("GameStateChange: Victory -> Playing");
-
     Globals.level += 1;
     _game_reset();
 
 
 ## Playing - GameOver ##########################################################
 def _game_change_state_playing_to_gameover():
-    log("GameStateChange: Playing -> Game Over");
-
     Globals.game_state = GAME_STATE_GAME_OVER;
     Globals.hud.set_state(Globals.game_state);
     Globals.hud.set_lives(Globals.lives     );
@@ -285,14 +271,11 @@ def _game_change_state_playing_to_gameover():
 
 ## GameOver - SplashScreen #####################################################
 def _game_change_state_gameover_to_splash_screen():
-    log("GameStateChange : GameOver -> SplashScreen");
     Globals.game_state = GAME_STATE_SPLASH_SCREEN;
 
 
 ## SplashScreen - Playing ######################################################
 def _game_change_state_splash_screen_to_playing():
-    log("GameStateChange : SplashScreen -> Playing");
-
     Globals.level = START_LEVEL;
     Globals.lives = START_LIVES;
 

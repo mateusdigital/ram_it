@@ -8,7 +8,6 @@ import pygame;
 from pygame.locals import *;
 ## Game_RamIt
 from constants import *;
-from log       import *;
 
 
 
