@@ -1,3 +1,42 @@
+##               █      █                                                     ##
+##               ████████                                                     ##
+##             ██        ██                                                   ##
+##            ███  █  █  ███        input.py                                  ##
+##            █ █        █ █        Game_RamIt                                ##
+##             ████████████                                                   ##
+##           █              █       Copyright (c) 2016                        ##
+##          █     █    █     █      AmazingCow - www.AmazingCow.com           ##
+##          █     █    █     █                                                ##
+##           █              █       N2OMatt - n2omatt@amazingcow.com          ##
+##             ████████████         www.amazingcow.com/n2omatt                ##
+##                                                                            ##
+##                  This software is licensed as GPLv3                        ##
+##                 CHECK THE COPYING FILE TO MORE DETAILS                     ##
+##                                                                            ##
+##    Permission is granted to anyone to use this software for any purpose,   ##
+##   including commercial applications, and to alter it and redistribute it   ##
+##               freely, subject to the following restrictions:               ##
+##                                                                            ##
+##     0. You **CANNOT** change the type of the license.                      ##
+##     1. The origin of this software must not be misrepresented;             ##
+##        you must not claim that you wrote the original software.            ##
+##     2. If you use this software in a product, an acknowledgment in the     ##
+##        product IS HIGHLY APPRECIATED, both in source and binary forms.     ##
+##        (See opensource.AmazingCow.com/acknowledgment.html for details).    ##
+##        If you will not acknowledge, just send us a email. We'll be         ##
+##        *VERY* happy to see our work being used by other people. :)         ##
+##        The email is: acknowledgment_opensource@AmazingCow.com              ##
+##     3. Altered source versions must be plainly marked as such,             ##
+##        and must not be misrepresented as being the original software.      ##
+##     4. This notice may not be removed or altered from any source           ##
+##        distribution.                                                       ##
+##     5. Most important, you must have fun. ;)                               ##
+##                                                                            ##
+##      Visit opensource.amazingcow.com for more open-source projects.        ##
+##                                                                            ##
+##                                  Enjoy :)                                  ##
+##----------------------------------------------------------------------------##
+
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
@@ -5,51 +44,49 @@
 import pygame;
 
 
-class Input:
-    ############################################################################
-    ## Class vars                                                             ##
-    ############################################################################
-    prev_keys = None;
-    curr_keys = None;
+############################################################################
+## Global vars                                                            ##
+############################################################################
+_prev_keys = None;
+_curr_keys = None;
 
 
-    ############################################################################
-    ## Init                                                                   ##
-    ############################################################################
-    @staticmethod
-    def init():
-        Input.prev_keys = pygame.key.get_pressed();
-        Input.curr_keys = pygame.key.get_pressed();
+############################################################################
+## Init                                                                   ##
+############################################################################
+def init():
+    global _prev_keys;
+    global _curr_keys;
+
+    _prev_keys = pygame.key.get_pressed();
+    _curr_keys = pygame.key.get_pressed();
 
 
-    ############################################################################
-    ## Update                                                                 ##
-    ############################################################################
-    @staticmethod
-    def update():
-        Input.prev_keys = Input.curr_keys;
-        Input.curr_keys = pygame.key.get_pressed();
+############################################################################
+## Update                                                                 ##
+############################################################################
+def update():
+    global _prev_keys;
+    global _curr_keys;
+
+    _prev_keys = _curr_keys;
+    _curr_keys = pygame.key.get_pressed();
 
 
-    ############################################################################
-    ## Key Methods                                                            ##
-    ############################################################################
-    @staticmethod
-    def is_down(key):
-        return Input.curr_keys[key];
+############################################################################
+## Key Methods                                                            ##
+############################################################################
+def is_down(key):
+    return _curr_keys[key];
 
-    @staticmethod
-    def is_up(key):
-        return not Input.is_down(key);
+def is_up(key):
+    return not is_down(key);
 
-    @staticmethod
-    def was_down(key):
-        return Input.prev_keys[key] and Input.is_up(key);
+def was_down(key):
+    return _prev_keys[key] and is_up(key);
 
-    @staticmethod
-    def was_up(key):
-        return (not Input.prev_keys[key] and Input.is_down(key));
+def was_up(key):
+    return (not _prev_keys[key] and is_down(key));
 
-    @staticmethod
-    def is_click(key):
-        return Input.is_down(key) and Input.was_up(key);
+def is_click(key):
+    return is_down(key) and was_up(key);
