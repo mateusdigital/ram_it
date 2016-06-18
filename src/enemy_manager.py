@@ -1,9 +1,50 @@
+
+##               █      █                                                     ##
+##               ████████                                                     ##
+##             ██        ██                                                   ##
+##            ███  █  █  ███        enemy_manager.py                          ##
+##            █ █        █ █        Game_RamIt                                ##
+##             ████████████                                                   ##
+##           █              █       Copyright (c) 2016                        ##
+##          █     █    █     █      AmazingCow - www.AmazingCow.com           ##
+##          █     █    █     █                                                ##
+##           █              █       N2OMatt - n2omatt@amazingcow.com          ##
+##             ████████████         www.amazingcow.com/n2omatt                ##
+##                                                                            ##
+##                  This software is licensed as GPLv3                        ##
+##                 CHECK THE COPYING FILE TO MORE DETAILS                     ##
+##                                                                            ##
+##    Permission is granted to anyone to use this software for any purpose,   ##
+##   including commercial applications, and to alter it and redistribute it   ##
+##               freely, subject to the following restrictions:               ##
+##                                                                            ##
+##     0. You **CANNOT** change the type of the license.                      ##
+##     1. The origin of this software must not be misrepresented;             ##
+##        you must not claim that you wrote the original software.            ##
+##     2. If you use this software in a product, an acknowledgment in the     ##
+##        product IS HIGHLY APPRECIATED, both in source and binary forms.     ##
+##        (See opensource.AmazingCow.com/acknowledgment.html for details).    ##
+##        If you will not acknowledge, just send us a email. We'll be         ##
+##        *VERY* happy to see our work being used by other people. :)         ##
+##        The email is: acknowledgment_opensource@AmazingCow.com              ##
+##     3. Altered source versions must be plainly marked as such,             ##
+##        and must not be misrepresented as being the original software.      ##
+##     4. This notice may not be removed or altered from any source           ##
+##        distribution.                                                       ##
+##     5. Most important, you must have fun. ;)                               ##
+##                                                                            ##
+##      Visit opensource.amazingcow.com for more open-source projects.        ##
+##                                                                            ##
+##                                  Enjoy :)                                  ##
+##----------------------------------------------------------------------------##
+
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
 ## Python ##
 import random;
 ## Game_RamIt ##
+import sound;
 from enemy      import *;
 from projectile import *;
 from cowclock   import *;
@@ -100,6 +141,7 @@ class EnemyManager:
                 enemy.shrink(ENEMY_SHRINK_AMMOUNT);
                 projectile.kill();
 
+                sound.play_hit_sound(enemy.get_width());
                 return True; ## Projectile can hit only one enemy per time.
 
         return False;
@@ -161,12 +203,11 @@ class EnemyManager:
             enemy_index -= (ENEMIES_LEFT_COUNT);
 
         self.enemies.append(Enemy_Factory(enemy_side, enemy_index));
-
+        sound.play_enemy_init_sound(enemies_count);
 
     def _on_init_timer_done(self):
         self.grow_timer.start();
         self.finished_init = True;
-        ## COWTODO: inform game that we are done with the initialization.
 
 
     ## Enemy Grow ##############################################################
@@ -181,4 +222,6 @@ class EnemyManager:
             if(self.enemies[index].get_width() > 0):
                 ## Make it grow...
                 self.enemies[index].grow(ENEMY_GROW_AMMOUNT);
+                sound.play_tictac_sound();
+
                 return;
