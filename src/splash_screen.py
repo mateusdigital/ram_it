@@ -1,3 +1,42 @@
+##               █      █                                                     ##
+##               ████████                                                     ##
+##             ██        ██                                                   ##
+##            ███  █  █  ███        splash_screen.py                          ##
+##            █ █        █ █        Game_RamIt                                ##
+##             ████████████                                                   ##
+##           █              █       Copyright (c) 2016                        ##
+##          █     █    █     █      AmazingCow - www.AmazingCow.com           ##
+##          █     █    █     █                                                ##
+##           █              █       N2OMatt - n2omatt@amazingcow.com          ##
+##             ████████████         www.amazingcow.com/n2omatt                ##
+##                                                                            ##
+##                  This software is licensed as GPLv3                        ##
+##                 CHECK THE COPYING FILE TO MORE DETAILS                     ##
+##                                                                            ##
+##    Permission is granted to anyone to use this software for any purpose,   ##
+##   including commercial applications, and to alter it and redistribute it   ##
+##               freely, subject to the following restrictions:               ##
+##                                                                            ##
+##     0. You **CANNOT** change the type of the license.                      ##
+##     1. The origin of this software must not be misrepresented;             ##
+##        you must not claim that you wrote the original software.            ##
+##     2. If you use this software in a product, an acknowledgment in the     ##
+##        product IS HIGHLY APPRECIATED, both in source and binary forms.     ##
+##        (See opensource.AmazingCow.com/acknowledgment.html for details).    ##
+##        If you will not acknowledge, just send us a email. We'll be         ##
+##        *VERY* happy to see our work being used by other people. :)         ##
+##        The email is: acknowledgment_opensource@AmazingCow.com              ##
+##     3. Altered source versions must be plainly marked as such,             ##
+##        and must not be misrepresented as being the original software.      ##
+##     4. This notice may not be removed or altered from any source           ##
+##        distribution.                                                       ##
+##     5. Most important, you must have fun. ;)                               ##
+##                                                                            ##
+##      Visit opensource.amazingcow.com for more open-source projects.        ##
+##                                                                            ##
+##                                  Enjoy :)                                  ##
+##----------------------------------------------------------------------------##
+
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
@@ -5,52 +44,45 @@
 import pygame;
 ## Game_RamIt ##
 import assets;
+import director;
 from constants import *;
-from text      import *;
-
-
+from cowclock  import *;
 
 class SplashScreen:
     ############################################################################
     ## Init                                                                   ##
     ############################################################################
     def __init__(self):
-        self._ram_it_logo      = assets.load_image("RamIt_Logo.png");
-        self._ram_it_logo_size = self._ram_it_logo.get_size();
-        self._ram_it_logo_pos  = (PLAYFIELD_CENTER_X - (self._ram_it_logo_size[0] / 2),
-                                  PLAYFIELD_TOP + 20);
+        director.set_clear_color(COLOR_WHITE);
 
-        self._logo      = assets.load_image("AmazingCow_Logo.png");
-        self._logo_size = self._logo.get_size();
-        self._logo_pos  = (PLAYFIELD_CENTER_X - (self._logo_size[0] / 2),
-                           self._ram_it_logo_pos [1] +
-                           self._ram_it_logo_size[1] + 40);
+        ## Logo
+        self._logo     = assets.load_image("AmazingCow_Logo.png");
+        logo_size      = self._logo.get_size();
+        self._logo_pos = (GAME_WIN_WIDTH  * 0.5 - logo_size[0] * 0.5,
+                          GAME_WIN_HEIGHT * 0.5 - logo_size[1] * 0.5);
 
+        self._visible = False;
 
-        self._amazingcow_text = Text(FONT_NAME, 20, -1, -1);
-        self._amazingcow_text.set_contents("www.AMAZINGCOW.com");
-        size = self._amazingcow_text.get_size();
-        self._amazingcow_text.set_position(PLAYFIELD_CENTER_X - (size[0] / 2),
-                                           self._logo_pos [1] +
-                                           self._logo_size[1] + 20);
-
-
-        self._help_text = Text(FONT_NAME, FONT_SIZE + 5, -1, -1);
-        self._help_text.set_contents("Help AACD! [www.aacd.org]");
-        size = self._help_text.get_size();
-        self._help_text.set_position(PLAYFIELD_CENTER_X - (size[0] / 2),
-                                     GAME_WIN_HEIGHT - size[1] - 10);
+        ## Timer
+        self._timer = CowClock(0.3, 5, self._on_timer_tick, self._on_timer_done);
+        self._timer.start();
 
 
     ############################################################################
     ## Update / Draw                                                          ##
     ############################################################################
     def update(self, dt):
-        pass;
+        self._timer.update(dt);
 
     def draw(self, surface):
-        surface.blit(self._logo, self._logo_pos);
-        surface.blit(self._ram_it_logo, self._ram_it_logo_pos);
+        if(self._visible):
+            surface.blit(self._logo, self._logo_pos);
 
-        self._help_text.draw(surface);
-        self._amazingcow_text.draw(surface);
+    ############################################################################
+    ## Timer Callbacks                                                        ##
+    ############################################################################
+    def _on_timer_tick(self):
+        self._visible = True;
+
+    def _on_timer_done(self):
+        director.go_to_menu();
