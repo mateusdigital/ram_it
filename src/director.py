@@ -71,15 +71,23 @@ class _Globals:
 ################################################################################
 ## Init ########################################################################
 def init():
-    sound.pre_init();
+    ## Pre inits
+    sound.pre_init ();
+    assets.pre_init();
+
+    ## Pygame
     pygame.init();
 
-    ## Init the Window.
-    _Globals.draw_surface = pygame.display.set_mode(GAME_WIN_SIZE);
-    pygame.display.set_caption(GAME_WIN_CAPTION);
+    #COWTODO: fix this mess.
+    rawicon = assets.load_image_no_convert("ramit_icon.png");
+    pygame.display.set_icon(rawicon);
+    pygame.display.set_caption(GAME_WIN_CAPTION, "Ram It");
 
-    ## Init the input.
+
+    ## Init the Window and Input
+    _Globals.draw_surface = pygame.display.set_mode(GAME_WIN_SIZE);
     input.init();
+
 
     ## Make the game running.
     _Globals.running = True;
