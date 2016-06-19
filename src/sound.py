@@ -124,8 +124,7 @@ def _generateTone(freq, wave, play_frames,
                   vol       = 1,
                   add_noise = False):
 
-    (pb_freq, pb_bits, pb_chns) = pygame.mixer.get_init()
-
+    (pb_freq, pb_bits, pb_chns) = pygame.mixer.get_init();
     length = GAME_FRAME_SECS * play_frames;
 
     multiplier = int(freq * length);
@@ -150,6 +149,11 @@ def _generateTone(freq, wave, play_frames,
         noise = np.random.normal(0, 1, length);
         ary = ary + noise;
 
+    ## If mixer is in stereo mode, double up the array
+    ## information for each channel.
+    if pb_chns == 2:
+        ary = np.repeat(ary[..., np.newaxis], 2, axis=1)
+
 
     buffer = None;
     ## 8 Bits
@@ -167,6 +171,12 @@ def _generateTone(freq, wave, play_frames,
 def _play_buffer(channel, buffer):
     sound_buffer = pygame.sndarray.make_sound(buffer);
     channel      = pygame.mixer.Channel(channel);
+
+    unused_channel = pygame.mixer.find_channel();
+    if(unused_channel is not None):
+        channel = unused_channel;
+    # else:
+        #print "- Cannot find a unused channel -"
 
     if(channel.get_busy()):
         channel.queue(sound_buffer);
@@ -194,6 +204,7 @@ def pre_init():
                           PRE_INIT_SIZE,
                           PRE_INIT_CHANNELS,
                           PRE_INIT_BUFFER);
+
 
 
 ################################################################################
