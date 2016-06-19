@@ -113,7 +113,7 @@ class GameScreen():
     def _update_playing(self, dt):
         ## Check if player wants to pause.
         if(input.is_click(K_p)):
-            self.change_state_playing_to_paused();
+            self._change_state_playing_to_paused();
             return;
 
         ## Update the Enemies.
