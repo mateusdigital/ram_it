@@ -108,7 +108,6 @@ class MenuScreen:
                 director.go_to_credits();
 
 
-
     def draw(self, surface):
         Playfield().draw(surface, draw_pipe = False, draw_side = True);
 
