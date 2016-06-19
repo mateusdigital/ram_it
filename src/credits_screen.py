@@ -94,15 +94,15 @@ class CreditsScreen:
             "This means that you're welcome to",
             "SHARE and HACK IT (!!!)",
             "",
-            "You can found the sources at:",
+            "You can find the sources at:",
             "opensource.amazingcow.com",
             "",
             "Dev / Graphics / Sound by N2OMatt",
             "","",
             "THANKS FOR PLAYING..."
             "", "", "",
-            "APAE does a wonderful job helping exceptional people",
-            "Why you don't check and help their work? <3",
+            "APAE do a wonderful job helping exceptional people",
+            "Why you don't look and help their work? <3",
             "www.apaebrasil.org.br"
         ];
 
