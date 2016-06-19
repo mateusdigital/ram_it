@@ -41,7 +41,7 @@
 
 
 START_LEVEL = 1;
-START_LIVES = 1;
+START_LIVES = 3;
 
 GAME_STATE_PAUSED        = 0;
 GAME_STATE_PLAYING       = 1;
@@ -99,7 +99,7 @@ ENEMY_SPACING = 5;
 ENEMY_LEFT_SIDE  = 0;
 ENEMY_RIGHT_SIDE = 1;
 
-ENEMY_SHRINK_AMMOUNT = 30;
+ENEMY_SHRINK_AMMOUNT = 35;
 ENEMY_GROW_AMMOUNT   = 25;
 
 PLAYFIELD_TOP      = 100;
@@ -143,60 +143,3 @@ ENEMY_COLOR_INDEX = map(c, range(0, 500));
 ################################################################################
 FONT_NAME = "nokiafc22.ttf";
 FONT_SIZE = 17;
-
-################################################################################
-## TIMER                                                                      ##
-################################################################################
-TIMER_ENEMY_BASE_TIME = 0.5;
-
-TIMER_THRESHOLD = [
-    #LEVEL 0 - UNUSED.
-    [-1000],
-
-    # LEVEL 1
-    [20, 15, 10],
-    # LEVEL 2
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-    # COWTODO:
-    [20, 15, 10],
-]
