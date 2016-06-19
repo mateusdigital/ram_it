@@ -40,14 +40,48 @@
 ##                                  Enjoy :)                                  ##
 ##----------------------------------------------------------------------------##
 
+################################################################################
+## NOT INTENDED TO BE MODIFIED - But if so change the assets.py too           ##
+################################################################################
+_COW_BIN="/usr/local/bin"
+_COW_SHARE="/usr/local/share/amazingcow_game_ramit"
 
-build:
-	python ./src/main.py ./assets 3
+
+################################################################################
+## End user                                                                   ##
+################################################################################
+install:
+	@ echo "---> Installing...".
+
+	@ ## Deleting old stuff...
+	@ rm -rf $(_COW_SHARE)
+	@ rm -rf $(_COW_BIN)/ram-it
+
+	@ ## Install new stuff...
+	@ cp -rf ./src/    $(_COW_SHARE)        ## Source
+	@ ln -s $(_COW_SHARE)/main.py $(_COW_BIN)/ram-it
+	@ chmod 755 $(_COW_BIN)/ram-it
+
+	@ cp -rf ./assets/ $(_COW_SHARE)/assets ## Assets
+
+	@ echo "---> Done... We **really** hope that you have fun :D"
+
+
+
+################################################################################
+## Dev                                                                        ##
+################################################################################
+gen-compiled:
+	rm -rf build dist main.spec
+	pyinstaller -F --windowed                                       \
+	            --osx-bundle-identifier="com.amazingcow.game_ramit" \
+	            ./src/main.py
+
+
+dev-build:
+	python ./src/main.py ./assets
 	rm ./src/*.pyc
 
-info:
-	python ./src/enemy_info.py
 
-exe:
-	rm -rf build dist main.spec
-	pyinstaller -F --windowed ./src/main.py
+dev-info:
+	python ./src/enemy_info.py
