@@ -44,12 +44,13 @@
 ################################################################################
 ## Python ##
 import random;
+import copy;
 ## Game_RamIt ##
 import sound;
 from enemy      import *;
 from projectile import *;
 from cowclock   import *;
-
+from enemy_info import *;
 
 
 class EnemyManager:
@@ -71,14 +72,14 @@ class EnemyManager:
         self.enemies_alive_count      = 0;
         self.enemy_greater_width      = 0;
         self.enemies_total_width      = 0;
-
+        self.enemy_info               = None;
 
         ## Init the timers
         self.init_timer = CowClock(0.03, ENEMIES_COUNT,
                                    self._on_init_timer_tick,
                                    self._on_init_timer_done);
 
-        self.grow_timer = CowClock(TIMER_ENEMY_BASE_TIME,
+        self.grow_timer = CowClock(-1, ## DUMMY VALUE - Set in self.reset.
                                    CowClock.REPEAT_FOREVER,
                                    self._on_grow_timer_tick);
 
@@ -112,9 +113,13 @@ class EnemyManager:
         self.enemy_greater_width = ENEMY_START_WIDTH;
         self.enemies_total_width = ENEMY_START_WIDTH * ENEMIES_COUNT;
 
+        self.enemy_info = EnemyInfo(level);
+
+
         ##Timers
-        self.grow_timer.set_time(TIMER_ENEMY_BASE_TIME);
-        self.timer_speed_up_threshold = TIMER_THRESHOLD[level];
+        self.grow_timer.set_time(self.enemy_info.base_timer);
+        ## Deep copy because if the player dies we will not speed up again...
+        self.timer_speed_up_threshold = copy.deepcopy(self.enemy_info.timer_threshold);
 
         self.enemies = []; ## Reset all enemies.
 
@@ -177,7 +182,7 @@ class EnemyManager:
             return;
 
         if(self.enemies_alive_count == self.timer_speed_up_threshold[0]):
-            tick_time = self.grow_timer.get_time() - 0.05;
+            tick_time = self.grow_timer.get_time() - self.enemy_info.timer_decay;
             self.grow_timer.set_time(tick_time);
             self.timer_speed_up_threshold.pop(0);
 
@@ -217,8 +222,15 @@ class EnemyManager:
             self.grow_timer.stop();
             return;
 
+        ## The set trick is the grow_timer can be called when
+        ## the enemy just died. So, if we keep search for an
+        ## alive enemy we will get stuck into an infinite loop.
+        ## This way, we ensure that we "touch" all enemies, but
+        ## if any of them are alive, we just give up.
+        tries_set = set();
         while(True):
             index = random.randint(0, len(self.enemies) -1);
+            tries_set.add(index);
 
             if(self.enemies[index].get_width() > 0):
                 ## Make it grow...
@@ -226,3 +238,6 @@ class EnemyManager:
                 sound.play_tictac_sound();
 
                 return;
+
+
+
