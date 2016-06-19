@@ -51,7 +51,30 @@ import pygame;
 ################################################################################
 ## Global vars                                                                ##
 ################################################################################
-_assets_search_path = ".";
+_paths              = [".", "/usr/local/share/amazingcow_game_ramit"];
+_assets_search_path = None;
+
+
+
+################################################################################
+## Init                                                                       ##
+################################################################################
+def pre_init():
+    global _paths;
+    global _assets_search_path;
+
+    ## Was explicit set.
+    if(_assets_search_path is not None):
+        return;
+
+    for path in _paths:
+        fullpath = os.path.join(path, "assets");
+        if(os.path.isdir(fullpath)):
+            _assets_search_path = fullpath;
+            return;
+
+    print "Error - Cannot find the assets folder, aborting...";
+    exit(1);
 
 
 ################################################################################
@@ -68,10 +91,11 @@ def get_search_path():
 ################################################################################
 ## Image Functions                                                            ##
 ################################################################################
+def load_image_no_convert(name):
+    return pygame.image.load(os.path.join(get_search_path(), name));
+
 def load_image(name):
-    return pygame.image.load(
-                    os.path.join(get_search_path(), name)
-           ).convert_alpha();
+    return load_image_no_convert(name).convert_alpha();
 
 
 ################################################################################
