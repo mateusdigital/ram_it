@@ -49,11 +49,10 @@ Thanks!
 
 ## Screen Shots:
 
-<!-- COWTODO: Add the game screen shots -->
-
-#### Menu:
-#### Game:
-
+<a href="http://amazingcow.com/opensource/game/game_ramit/img/1.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/1.png" width="20%" height="20%"> </a>
+<a href="http://amazingcow.com/opensource/game/game_ramit/img/2.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/2.png" width="20%" height="20%"> </a>
+<a href="http://amazingcow.com/opensource/game/game_ramit/img/3.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/3.png" width="20%" height="20%"> </a>
+<a href="http://amazingcow.com/opensource/game/game_ramit/img/4.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/4.png" width="20%" height="20%"> </a>
 
 
 <!-- ####################################################################### -->
