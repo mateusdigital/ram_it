@@ -2,3 +2,6 @@
 dist/
 build/
 main.spec
+ram_it.spec
+archives/
+bin/
