@@ -41,10 +41,17 @@
 ##----------------------------------------------------------------------------##
 
 ################################################################################
+## Vars                                                                       ##
+################################################################################
+HOST="linux_x64"
+
+
+################################################################################
 ## NOT INTENDED TO BE MODIFIED - But if so change the assets.py too           ##
 ################################################################################
 _COW_BIN="/usr/local/bin"
 _COW_SHARE="/usr/local/share/amazingcow_game_ramit"
+_GIT_TAG=`git describe --tags --abbrev=0 | tr . _`
 
 
 ################################################################################
@@ -69,15 +76,43 @@ install:
 
 
 ################################################################################
-## Dev                                                                        ##
+## Release                                                                    ##
 ################################################################################
-gen-compiled:
-	rm -rf build dist main.spec
+gen-binary:
+	rm -rf build     \
+	       dist      \
+	       bin       \
+	       ram_it.spec
+
 	pyinstaller -F --windowed                                       \
+	            --name="ram_it"                                     \
 	            --osx-bundle-identifier="com.amazingcow.game_ramit" \
 	            ./src/main.py
 
+	mkdir -p ./bin/game_ramit
+	cp -r ./assets/      ./bin/game_ramit/assets
+	cp    ./dist/ram_it  ./bin/game_ramit/ram_it
+	cp AUTHORS.txt   \
+	   CHANGELOG.txt \
+	   COPYING.txt   \
+	   README.md     \
+	   TODO.txt      \
+	   ./bin/game_ramit
 
+	cd ./bin && zip -r ./$(HOST)_$(_GIT_TAG).zip ./game_ramit
+	rm -rf ./bin/game_ramit
+
+
+gen-archive:
+	mkdir -p ./archives
+
+	git archive --output ./archives/source_game_ramit_$(_GIT_TAG).zip    master
+	git archive --output ./archives/source_game_ramit_$(_GIT_TAG).tar.gz master
+
+
+################################################################################
+## Dev                                                                        ##
+################################################################################
 dev-build:
 	python ./src/main.py ./assets
 	rm ./src/*.pyc
