@@ -78,10 +78,10 @@ def init():
     ## Pygame
     pygame.init();
 
-    #COWTODO: fix this mess.
+    ## Setup the icon and caption.
     rawicon = assets.load_image_no_convert("ramit_icon.png");
     pygame.display.set_icon(rawicon);
-    pygame.display.set_caption(GAME_WIN_CAPTION, "Ram It");
+    pygame.display.set_caption(GAME_WIN_CAPTION, GAME_WIN_CAPTION_SHORT);
 
 
     ## Init the Window and Input
@@ -155,7 +155,6 @@ def go_to_credits():
 def _update(dt):
     input.update();
     _Globals.curr_scene.update(dt);
-
 
 ################################################################################
 ## Draw Functions                                                             ##
