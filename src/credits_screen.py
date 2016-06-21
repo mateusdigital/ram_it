@@ -49,16 +49,9 @@ import pygame.locals;
 import assets;
 import director;
 import input;
-from constants import *;
-from text      import *;
-
-
-def color_surface(surface, red, green, blue):
-    arr        = pygame.surfarray.pixels3d(surface)
-    arr[:,:,0] = red
-    arr[:,:,1] = green
-    arr[:,:,2] = blue
-
+from constants     import *;
+from text          import *;
+from color_surface import *;
 
 class CreditsScreen:
     ############################################################################
