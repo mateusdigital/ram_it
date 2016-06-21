@@ -42,13 +42,18 @@
 ################################################################################
 ## Imports                                                                    ##
 ################################################################################
+## Python ##
+import random;
 ## Pygame ##
 import pygame;
 ## Game_RamIt ##
 import assets;
+import sound;
 import director;
-from constants import *;
-from cowclock  import *;
+from constants     import *;
+from cowclock      import *;
+from color_surface import *;
+from text          import *;
 
 class SplashScreen:
     ############################################################################
@@ -58,16 +63,32 @@ class SplashScreen:
         director.set_clear_color(COLOR_WHITE);
 
         ## Logo
-        self._logo     = assets.load_image("AmazingCow_Logo.png");
+        self._logo     = assets.load_image("AmazingCow_Logo_Big.png");
         logo_size      = self._logo.get_size();
         self._logo_pos = (GAME_WIN_WIDTH  * 0.5 - logo_size[0] * 0.5,
-                          GAME_WIN_HEIGHT * 0.5 - logo_size[1] * 0.5);
+                          GAME_WIN_HEIGHT * 0.5 - logo_size[1]); ## A bit above center
 
-        self._visible = False;
+        ## Text
+        self._text = Text(FONT_NAME, FONT_SIZE + 15,
+                         -1, -1,  ## Dummy values.
+                         "amazingcow", COLOR_BLACK);
+        text_size = self._text.get_size();
+        self._text.set_position(
+            GAME_WIN_WIDTH  * 0.5 - text_size[0] * 0.5,
+            self._logo_pos[1] + logo_size[1] + 20,
+        );
 
         ## Timer
-        self._timer = CowClock(0.3, 5, self._on_timer_tick, self._on_timer_done);
+        self._timer = CowClock(0.4, 5, self._on_timer_tick, self._on_timer_done);
         self._timer.start();
+
+        ## Others
+        self._curr_rgb = list(COLOR_WHITE);
+        self._dst_rgb  = (random.randint(0, 255),
+                          random.randint(0, 255),
+                          random.randint(0, 255));
+
+        self._update_colors = False;
 
 
     ############################################################################
@@ -76,15 +97,40 @@ class SplashScreen:
     def update(self, dt):
         self._timer.update(dt);
 
+        if(not self._update_colors):
+            return;
+
+        curr_r, curr_g, curr_b = self._curr_rgb;
+        dst_r, dst_g, dst_b    = self._dst_rgb;
+        step = 5;
+
+        ## Red
+        if  (curr_r > dst_r): curr_r -= step;
+        elif(curr_r < dst_r): curr_r += step;
+        ## Blue
+        if  (curr_g > dst_g): curr_g -= step;
+        elif(curr_g < dst_g): curr_g += step;
+        ## Green
+        if  (curr_b > dst_b): curr_b -= step;
+        elif(curr_b < dst_b): curr_b += step;
+
+        self._curr_rgb = curr_r, curr_b, curr_g;
+        color_surface(self._logo, curr_r, curr_g, curr_b);
+
+
     def draw(self, surface):
-        if(self._visible):
+        if(self._update_colors):
             surface.blit(self._logo, self._logo_pos);
+            self._text.draw(surface);
+
 
     ############################################################################
     ## Timer Callbacks                                                        ##
     ############################################################################
     def _on_timer_tick(self):
-        self._visible = True;
+        if(self._update_colors == False):
+            sound.play_intro();
+            self._update_colors = True;
 
     def _on_timer_done(self):
         director.go_to_menu();
