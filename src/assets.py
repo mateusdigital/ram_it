@@ -87,12 +87,15 @@ def set_search_path(path):
 def get_search_path():
     return _assets_search_path;
 
+def build_path(filename):
+    return os.path.join(get_search_path(), filename);
+
 
 ################################################################################
 ## Image Functions                                                            ##
 ################################################################################
 def load_image_no_convert(name):
-    return pygame.image.load(os.path.join(get_search_path(), name));
+    return pygame.image.load(build_path(name));
 
 def load_image(name):
     return load_image_no_convert(name).convert_alpha();
@@ -102,4 +105,4 @@ def load_image(name):
 ## Font Functions                                                             ##
 ################################################################################
 def load_font(name, size):
-    return pygame.font.Font(os.path.join(get_search_path(), name), size);
+    return pygame.font.Font(build_path(name), size);
