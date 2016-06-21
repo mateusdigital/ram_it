@@ -80,6 +80,7 @@ import pygame;
 import numpy as np;
 import scipy as sp;
 ## Game_RamIt ##
+import assets;
 from constants import *;
 
 
@@ -108,7 +109,8 @@ _ENEMIES_ENABLED  = True;
 
 _VOLUME_HI  = 1.0; ## Used for shot - The perceptive volume is very bellow
                    ## from the other sounds....
-_VOLUME_MED = 0.5; ## Used for everything else.
+_VOLUME_MED = 0.5;
+_VOLUME_LOW = 0.2;
 
 
 PRE_INIT_FREQUENCY = 22050;
@@ -218,6 +220,12 @@ def stop_all_sounds():
     pygame.mixer.Channel(CHANNEL_INDEX_OTHER ).stop();
 
 
+################################################################################
+## Intro                                                                      ##
+################################################################################
+def play_intro():
+    pygame.mixer.Sound(assets.build_path("amazing_intro.wav")).play();
+
 
 ################################################################################
 ## Player                                                                     ##
@@ -240,7 +248,7 @@ def play_player_sound(y_per):
                 wave_type    = WAVE_SQUARE,
                 frames_count = 5,
                 add_noise    = False,
-                volume       = _VOLUME_MED);
+                volume       = _VOLUME_LOW);
 
 
 ################################################################################
@@ -365,4 +373,4 @@ def play_enemy_init_sound(index):
                 wave_type    = WAVE_SQUARE,
                 frames_count = 3,
                 add_noise    = False,
-                volume       = _VOLUME_MED);
+                volume       = _VOLUME_LOW);
