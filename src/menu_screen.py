@@ -84,6 +84,12 @@ class MenuScreen:
         self._credits_text.set_position(wcenter - (credits_size[0] * 0.5),
                                         350);
 
+        ## AmazingCow
+        self._amazingcow_text = Text(FONT_NAME, FONT_SIZE, -1, -1, "amazingcow - 2016");
+        amazing_size = self._amazingcow_text.get_size();
+        self._amazingcow_text.set_position(wcenter - (amazing_size[0] * 0.5),
+                                           GAME_WIN_HEIGHT - (amazing_size[1] + 20));
+
         ## Selection
         self._curr_selection = -1;
         self._update_selection(1, play_sound = False); ## Force the blinking on play...
@@ -113,8 +119,9 @@ class MenuScreen:
 
         surface.blit(self._ram_it_logo, self._ram_it_logo_pos);
 
-        self._play_text.draw(surface);
-        self._credits_text.draw(surface);
+        self._play_text.draw      (surface);
+        self._credits_text.draw   (surface);
+        self._amazingcow_text.draw(surface);
 
 
     ############################################################################
