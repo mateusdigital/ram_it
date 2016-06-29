@@ -78,7 +78,6 @@ import random;
 import pygame;
 ## NumPy /SciPy ##
 import numpy as np;
-import scipy as sp;
 ## Game_RamIt ##
 import assets;
 from constants import *;
