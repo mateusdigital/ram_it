@@ -51,7 +51,7 @@ import pygame;
 ################################################################################
 ## Global vars                                                                ##
 ################################################################################
-_paths              = [".", "/usr/local/share/amazingcow_game_ramit"];
+_paths              = [".", "/usr/local/share/amazingcow_game_ram_it"];
 _assets_search_path = None;
 
 
