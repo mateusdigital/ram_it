@@ -38,39 +38,67 @@
 ##                                  Enjoy :)                                  ##
 ##----------------------------------------------------------------------------##
 
+##COWTODO: We hard code the paths in assets.py      \
+##         While this matches the paths in Makefile \
+##         it's fragile and we must change to       \
+##         a more robust approach soon as possible.
+
 ################################################################################
-## Vars                                                                       ##
+## Public Vars                                                                ##
 ################################################################################
-HOST="linux_x64"
+HOST=`uname -s`_`uname -m`
 
 
 ################################################################################
-## NOT INTENDED TO BE MODIFIED - But if so change the assets.py too           ##
+## Private Vars                                                               ##
 ################################################################################
-_COW_BIN="/usr/local/bin"
-_COW_SHARE="/usr/local/share/amazingcow_game_ramit"
+_GAME_SAFE_NAME=ram_it
+_GAME_NAME=ram-it
+_DESKTOP_FILENAME=$(_GAME_SAFE_NAME).desktop
+
+_INSTALL_DIR_BIN=/usr/local/bin
+_INSTALL_DIR_SHARE=/usr/local/share/amazingcow_game_$(_GAME_SAFE_NAME)
+_INSTALL_DIR_DESKTOP=/usr/share/applications
+
+_PROJECT_DIR=./project
+_PROJECT_DIR_BIN=$(_PROJECT_DIR)/bin
+_PROJECT_DIR_OBJ=$(_PROJECT_DIR)/obj
+
+
 _GIT_TAG=`git describe --tags --abbrev=0 | tr . _`
+_CC=g++ -Ofast
+_XBUILD=xbuild /p:Configuration=Release
+
+SILENT=@
 
 
 ################################################################################
 ## End user                                                                   ##
 ################################################################################
 install:
-	@ echo "---> Installing...".
+	$(SILENT) echo "---> Installing..."
 
-	@ ## Deleting old stuff...
-	@ rm -rf $(_COW_SHARE)
-	@ rm -rf $(_COW_BIN)/ram-it
+	$(SILENT) ## Deleting old stuff...
+	$(SILENT) rm -rf $(_INSTALL_DIR_SHARE)
+	$(SILENT) rm -rf $(_INSTALL_DIR_BIN)/$(_GAME_NAME)
+	$(SILENT) rm -rf $(_INSTALL_DIR_DESKTOP/$(_DESKTOP_FILENAME)
 
-	@ ## Install new stuff...
-	@ cp -rf ./src/    $(_COW_SHARE)        ## Source
-	@ ln -s $(_COW_SHARE)/main.py $(_COW_BIN)/ram-it
-	@ chmod 755 $(_COW_BIN)/ram-it
+	$(SILENT) ## Create the dir if it doesn't exists...
+	$(SILENT) mkdir -p $(_INSTALL_DIR_SHARE)
 
-	@ cp -rf ./assets/ $(_COW_SHARE)/assets ## Assets
+	$(SILENT) ## Copy the files to the share
+	$(SILENT) cp -rf ./build/* $(_INSTALL_DIR_SHARE)
 
-	@ echo "---> Done... We **really** hope that you have fun :D"
+	$(SILENT) ## Link the bootstrap (Notice that is symbolic link)
+	$(SILENT) ## and make it executable.
+	$(SILENT) ln -fs $(_INSTALL_DIR_SHARE)/main.py $(_INSTALL_DIR_BIN)/$(_GAME_NAME)
+	$(SILENT) chmod 755 $(_INSTALL_DIR_BIN)/$(_GAME_NAME)
 
+	$(SILENT) ## Copy the desktop entry.
+	$(SILENT) cp -f $(_DESKTOP_FILENAME) $(_INSTALL_DIR_DESKTOP)
+
+
+	$(SILENT) echo "---> Done... We **really** hope that you have fun :D"
 
 
 ################################################################################
@@ -82,9 +110,8 @@ gen-binary:
 	       bin       \
 	       ram_it.spec
 
-	pyinstaller -F --windowed                                       \
-	            --name="ram_it"                                     \
-	            --osx-bundle-identifier="com.amazingcow.game_ramit" \
+	pyinstaller -F --windowed   \
+	            --name="ram_it" \
 	            ./src/main.py
 
 	mkdir -p ./bin/game_ramit
@@ -95,6 +122,7 @@ gen-binary:
 	   COPYING.txt   \
 	   README.md     \
 	   TODO.txt      \
+
 	   ./bin/game_ramit
 
 	cd ./bin && zip -r ./$(HOST)_$(_GIT_TAG).zip ./game_ramit
@@ -112,9 +140,8 @@ gen-archive:
 ## Dev                                                                        ##
 ################################################################################
 dev-build:
-	python ./src/main.py ./assets
-	rm ./src/*.pyc
+	rm -rf ./build
+	mkdir -p ./build
 
-
-dev-info:
-	python ./src/enemy_info.py
+	cp -rf ./src/*.py ./build
+	cp -rf ./assets   ./build
