@@ -3,18 +3,6 @@
 **Made with <3 by [Amazing Cow](http://www.amazingcow.com).**
 
 
-
-<!-- ####################################################################### -->
-<!-- ####################################################################### -->
-
-## Websites:
-
-* [Game Ram It Website](http://opensource.amazingcow.com/game/game_ramit/)
-* [Games Website](http://opensource.amazingcow.com/game/) - 
-The Amazing Cow's Games site.
-
-
-
 <!-- ####################################################################### -->
 <!-- ####################################################################### -->
 
@@ -47,40 +35,14 @@ Thanks!
 <!-- ####################################################################### -->
 <!-- ####################################################################### -->
 
-## Screen Shots:
-
-<a href="http://amazingcow.com/opensource/game/game_ramit/img/1.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/1.png" width="20%" height="20%"> </a>
-<a href="http://amazingcow.com/opensource/game/game_ramit/img/2.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/2.png" width="20%" height="20%"> </a>
-<a href="http://amazingcow.com/opensource/game/game_ramit/img/3.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/3.png" width="20%" height="20%"> </a>
-<a href="http://amazingcow.com/opensource/game/game_ramit/img/4.png"> <img src="http://amazingcow.com/opensource/game/game_ramit/img/4.png" width="20%" height="20%"> </a>
-
-
-<!-- ####################################################################### -->
-<!-- ####################################################################### -->
-
 ## Download & Install:
 
-#### Option 1 - Compiled packages, just download and play :D
-
-You can just download the _"compiled"_ packages from 
-[Amazing Cow website](http://opensource.amazingcow.com/game/game_ramit/).
-
-There are _"compiled"_ version for Linux and OSX - Sorry Windows users, we 
-don't have a Windows box currently to make a package for it.
-
-**Notice that the assets folder MUST be in the same directory of the executable.**
-
-
-#### Option 2 - Source packages, _almost_ just download and play.
-
-You can either grab a copy of the sources from 
-[Amazing Cow website](http://opensource.amazingcow.com/game/game_ramit/) 
-or download directly from github.
+#### Option 1 - Source packages, _almost_ just download and play.
 
 **Check notes bellow about source install.**
 
 
-#### Option 3 - Clone / Fork the repo and hack it.
+#### Option 2 - Clone / Fork the repo and hack it.
 
 Also you can just ```git clone https://github.com/AmazingCow-Game/Game_RamIt``` 
 to grab the latest version of sources.    
@@ -89,10 +51,8 @@ You should (and probably will) be good to go!
 **Check notes bellow about source install.**
 
 
-#### Notes for Option 2 and 3:
+#### Notes:
 
-While the compiled package bundle everything that is needed to play, the game
-the sources distribution does not.   
 The game depends on ```pygame``` and ```numpy``` to run - So you need to 
 have them installed.
 
@@ -100,12 +60,16 @@ Assuming that you have both ```pygame``` and ```numpy```, we made a Makefile
 that installs the game into your system.    
 
 So just type:   
-``` 
-    make install 
+``` bash
+make dev-build    ## To generate the build.
+sudo make install ## To install the game.
 ``` 
 
 With the appropriated privileges and start gaming :D
 
+The ```install``` target will create a ```.desktop``` entry in ```games```
+sub-menu. So you can play clicking it or typing ```ram-it``` in your 
+terminal.
 
 
 <!-- ####################################################################### -->
