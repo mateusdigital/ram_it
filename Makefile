@@ -71,6 +71,7 @@ _XBUILD=xbuild /p:Configuration=Release
 
 SILENT=@
 
+all: dev-build
 
 ################################################################################
 ## End user                                                                   ##
@@ -145,3 +146,19 @@ dev-build:
 
 	cp -rf ./src/*.py ./build
 	cp -rf ./assets   ./build
+
+
+################################################################################
+## Clean                                                                      ##
+################################################################################
+clean:
+	## Archives
+	rm -rf archives
+
+	## Bin
+	rm -rf bin
+	rm -rf dist
+	rm -f ram_it.spec
+
+	## Build
+	rm -rf build
