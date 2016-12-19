@@ -1,6 +1,18 @@
 ################################################################################
 ## Version 1.x.x                                                              ##
 ################################################################################
+Version 1.2.0 - [Dec 19, 2016]
+-- General --
+    - Update the Makefile to include default and clean recipes.
+    - Change the "ownership" of game to Amazing Cow Labs.
+
+-- Makefile --
+    - Add the default recipe.
+      Now the end user can just type the "canonical"
+      make sequence (make; sudo make install)
+    - Add the clean recipe.
+
+--------------------------------------------------------------------------------
 Version 1.1.0 - [Jul 16, 2016]
     - Fix the asset loading paths.
     - Update the Makefile.
