@@ -2,7 +2,7 @@
 Categories=Game;Action;
 Encoding=UTF-8
 Name=Ram It
-Comment=Ram It is remake made with <3 by Amazing Cow
+Comment=Ram It is remake made with <3 by Amazing Cow Labs
 Exec=ram-it
 Icon=/usr/local/share/amazingcow_game_ram_it/assets/ramit_icon.png
 Type=Application

@@ -66,7 +66,7 @@ GAME_FPS = 60;
 GAME_FRAME_MS  = (1000.0 / GAME_FPS);
 GAME_FRAME_SECS= (1.0    / GAME_FPS);
 
-GAME_WIN_CAPTION       = "AmazingCow - RamIt - v0.0.2";
+GAME_WIN_CAPTION       = "Ram It - AmazingCow Labs - v1.2.0";
 GAME_WIN_CAPTION_SHORT = "Ram It";
 GAME_WIN_WIDTH         = 800;
 GAME_WIN_HEIGHT        = 600;
