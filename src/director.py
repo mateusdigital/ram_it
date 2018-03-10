@@ -55,6 +55,7 @@ from credits_screen import *;
 from game_screen    import *;
 
 
+
 ################################################################################
 ## Global vars                                                                ##
 ################################################################################
@@ -92,7 +93,7 @@ def init():
     ## Make the game running.
     _Globals.running = True;
 
-    ## Init the Intial Screen.
+    ## Init the Initial Screen.
     _Globals.curr_scene = SplashScreen();
 
 
@@ -103,29 +104,16 @@ def quit():
 
 ## Run #########################################################################
 def run():
-    frame_start = pygame.time.get_ticks();
-    frame_time  = 0;
+    clock = pygame.time.Clock()
 
     while(_Globals.running):
-        frame_start = pygame.time.get_ticks();
-
         ## Handle window events...
         for event in pygame.event.get():
             if(event.type == pygame.locals.QUIT):
                 _Globals.running = False;
 
-        ## Game Update
-        _update(GAME_FRAME_SECS);
-
         ## Keep the framerate tidy...
-        frame_time = (pygame.time.get_ticks() - frame_start);
-        if(frame_time < GAME_FRAME_MS):
-            while(1):
-                frame_time = (pygame.time.get_ticks() - frame_start);
-                if(frame_time >= GAME_FRAME_MS):
-                    break;
-        else:
-            print "MISS FRAME";
+        _update(clock.tick(0) / 1000.0);
 
         ## Game Draw
         _draw();
@@ -156,6 +144,7 @@ def _update(dt):
     input.update();
     _Globals.curr_scene.update(dt);
 
+
 ################################################################################
 ## Draw Functions                                                             ##
 ################################################################################
@@ -168,4 +157,3 @@ def _draw():
 
     ## Render
     pygame.display.update();
-
