@@ -135,8 +135,10 @@ COLOR_WHITE       = (255, 255, 255);
 COLOR_PIPE        = (160, 160, 160);
 COLOR_PLAYFIELD   = (162,   98, 33);
 import random;
-c = lambda x: (random.randint(40, 255), random.randint(40, 255), random.randint(40, 255));
-ENEMY_COLOR_INDEX = map(c, range(0, 500));
+ENEMY_COLOR_INDEX = [];
+for i in range(0, 500):
+    c = (random.randint(40, 255), random.randint(40, 255), random.randint(40, 255))
+    ENEMY_COLOR_INDEX.append(c)
 
 
 ################################################################################

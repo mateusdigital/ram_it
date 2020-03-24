@@ -106,22 +106,21 @@ _INFO = [
 ## Helper Functions                                                           ##
 ################################################################################
 def _print_out():
-    for i in xrange(1, len(_INFO) ):
+    for i in range(1, len(_INFO) ):
         info = _INFO[i];
 
         final_timer = info[_BASE_TIMER_INDEX] - (len(info[_THRESOLD_INDEX]) * info[_DECAY_INDEX]);
-        print "Level: %02d"  %(i),
-        print "|   Base timer: %0.2f" %(info[_BASE_TIMER_INDEX]),
-        # print "| Thresholds:", info[_THRESOLD_INDEX],
-        print "|   Decay: %0.2f" %(info[_DECAY_INDEX]),
-        print "|   Final timer: %f"  %(final_timer);
+        print("Level: %02d"  %(i),)
+        print("|   Base timer: %0.2f" %(info[_BASE_TIMER_INDEX]),)
+        print("|   Decay: %0.2f" %(info[_DECAY_INDEX]),)
+        print("|   Final timer: %f"  %(final_timer));
 
         if(i % 10 == 0):
-            print "";
+            print("");
 
 
         if(final_timer < _MIN_BASE_TIMER):
-            print "PLAY WILL NOT WIN THE GAME:", (i);
+            print("PLAY WILL NOT WIN THE GAME:", (i));
             exit(1);
 
 
@@ -132,9 +131,9 @@ def _adjust_difficulty():
     if(_adjusted == True):
         return;
 
-    for i in xrange(1, len(_INFO)):
+    for i in range(1, len(_INFO)):
         _INFO[i][_BASE_TIMER_INDEX] -= 0.025;
-        for j in xrange(0, len(_INFO[i][_THRESOLD_INDEX])):
+        for j in range(0, len(_INFO[i][_THRESOLD_INDEX])):
             _INFO[i][_THRESOLD_INDEX][j] += 4;
 
     _adjusted = True;
@@ -161,12 +160,6 @@ class EnemyInfo:
         self.base_timer      = info[0];
         self.timer_threshold = info[1];
         self.timer_decay     = info[2];
-
-
-        # print "self.level           :", self.level;
-        # print "self.base_timer      :", self.base_timer;
-        # print "self.timer_threshold :", self.timer_threshold;
-        # print "self.timer_decay     :", self.timer_decay;
 
 
 ################################################################################

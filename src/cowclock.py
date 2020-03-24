@@ -49,7 +49,7 @@ import sys;
 
 
 class CowClock(object):
-    REPEAT_FOREVER = sys.maxint; ##COWHACK: Should be ok, but verify...
+    REPEAT_FOREVER = -1;
 
 
     ############################################################################
@@ -137,10 +137,8 @@ class CowClock(object):
             self._tick_count += 1;
 
             #Did finish?
-            if(self._tick_count >= self._repeat_count):
+            if(self._tick_count >= self._repeat_count and self._repeat_count != CowClock.REPEAT_FOREVER):
                 self._enabled = False;
 
                 if(self._done_callback is not None):
                     self._done_callback();
-
-

@@ -73,7 +73,7 @@ def pre_init():
             _assets_search_path = fullpath;
             return;
 
-    print "Error - Cannot find the assets folder, aborting...";
+    print("Error - Cannot find the assets folder, aborting...");
     exit(1);
 
 
