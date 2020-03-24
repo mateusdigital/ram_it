@@ -117,6 +117,7 @@ PRE_INIT_SIZE      =   -16;
 PRE_INIT_CHANNELS  =     1;
 PRE_INIT_BUFFER    =   512;
 
+_can_play_sound = True;
 
 ################################################################################
 ## Private Functions                                                          ##
@@ -170,14 +171,15 @@ def _generateTone(freq, wave, play_frames,
 
 
 def _play_buffer(channel, buffer):
+    if(not _can_play_sound):
+        return;
+
     sound_buffer = pygame.sndarray.make_sound(buffer);
     channel      = pygame.mixer.Channel(channel);
 
     unused_channel = pygame.mixer.find_channel();
     if(unused_channel is not None):
         channel = unused_channel;
-    # else:
-        #print "- Cannot find a unused channel -"
 
     if(channel.get_busy()):
         channel.queue(sound_buffer);
@@ -187,6 +189,8 @@ def _play_buffer(channel, buffer):
 
 def _play_sound(channel, frequency, wave_type,
                 frames_count, add_noise, volume):
+    if(not _can_play_sound):
+        return;
 
     tone = _generateTone(freq        = frequency,
                         wave        = wave_type,
@@ -205,13 +209,21 @@ def pre_init():
                           PRE_INIT_SIZE,
                           PRE_INIT_CHANNELS,
                           PRE_INIT_BUFFER);
-
+    try:
+        pygame.mixer.init();
+    except Exception as e:
+        print("Sound Error: ", str(e));
+        global _can_play_sound;
+        _can_play_sound = False;
 
 
 ################################################################################
 ## Stop                                                                       ##
 ################################################################################
 def stop_all_sounds():
+    if(not _can_play_sound):
+        return;
+
     pygame.mixer.Channel(CHANNEL_INDEX_PLAYER).stop();
     pygame.mixer.Channel(CHANNEL_INDEX_TICTAC).stop();
     pygame.mixer.Channel(CHANNEL_INDEX_SHOT  ).stop();
@@ -223,6 +235,9 @@ def stop_all_sounds():
 ## Intro                                                                      ##
 ################################################################################
 def play_intro():
+    if(not _can_play_sound):
+        return;
+
     pygame.mixer.Sound(assets.build_path("amazing_intro.wav")).play();
 
 
@@ -230,7 +245,7 @@ def play_intro():
 ## Player                                                                     ##
 ################################################################################
 def play_player_sound(y_per):
-    if(not _PLAYER_ENABLED):
+    if(not _PLAYER_ENABLED or not _can_play_sound):
         return;
 
     y_per     = 1.0 - y_per; ## 0 -> Bottom, 1 -> Top.
@@ -255,7 +270,7 @@ def play_player_sound(y_per):
 ################################################################################
 _tictac_index = 0;
 def play_tictac_sound():
-    if(not _TICTAC_ENABLED):
+    if(not _TICTAC_ENABLED or not _can_play_sound):
         return;
 
     global _tictac_index;
@@ -278,7 +293,7 @@ def play_tictac_sound():
 ## Shot                                                                       ##
 ################################################################################
 def play_shot_sound():
-    if(not _SHOT_ENABLED):
+    if(not _SHOT_ENABLED or not _can_play_sound):
         return;
 
     min_freq  = 200;
@@ -297,7 +312,7 @@ def play_shot_sound():
 ## Hit                                                                        ##
 ################################################################################
 def play_hit_sound(enemy_width):
-    if(not _HIT_ENABLED):
+    if(not _HIT_ENABLED or not _can_play_sound):
         return;
 
     max_freq  = 700;
@@ -315,7 +330,7 @@ def play_hit_sound(enemy_width):
 ## Victory                                                                    ##
 ################################################################################
 def play_victory_sound():
-    if(not _VICTORY_ENABLED):
+    if(not _VICTORY_ENABLED or not _can_play_sound):
         return;
 
     min_freq = random.randint(600, 1000);
@@ -331,7 +346,7 @@ def play_victory_sound():
 ## Defeat                                                                     ##
 ################################################################################
 def play_defeat_sound():
-    if(not _DEFEAT_ENABLED):
+    if(not _DEFEAT_ENABLED or not _can_play_sound):
         return;
 
     max_freq = random.randint(800, 1000);
@@ -348,7 +363,7 @@ def play_defeat_sound():
 ## Game Over                                                                  ##
 ################################################################################
 def play_gameover_sound():
-    if(not _GAMEOVER_ENABLED):
+    if(not _GAMEOVER_ENABLED or not _can_play_sound):
         return;
 
     gen    = lambda i: _generateTone(random.randint(200, 800), WAVE_SAW, 10);
@@ -361,7 +376,7 @@ def play_gameover_sound():
 ## Enemy Init                                                                 ##
 ################################################################################
 def play_enemy_init_sound(index):
-    if(not _ENEMIES_ENABLED):
+    if(not _ENEMIES_ENABLED or not _can_play_sound):
         return;
 
     min_freq  = 200;
