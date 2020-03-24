@@ -62,11 +62,13 @@ DIRECTION_UP    = -1;
 ################################################################################
 ## GAME                                                                       ##
 ################################################################################
+GAME_VERSION = "1.0.0";
+
 GAME_FPS = 60;
 GAME_FRAME_MS  = (1000.0 / GAME_FPS);
 GAME_FRAME_SECS= (1.0    / GAME_FPS);
 
-GAME_WIN_CAPTION       = "Ram It - AmazingCow Labs - v1.2.0";
+GAME_WIN_CAPTION       = "Ram It - AmazingCow Labs - v{0}".format(GAME_VERSION);
 GAME_WIN_CAPTION_SHORT = "Ram It";
 GAME_WIN_WIDTH         = 800;
 GAME_WIN_HEIGHT        = 600;
