@@ -103,7 +103,7 @@ class CreditsScreen:
         start_offset = 140;
         line_offset  =  20;
 
-        for i in xrange(0, len(msg)):
+        for i in range(0, len(msg)):
             text      = Text("SourceCodePro-Regular.ttf", 20, -1, -1, msg[i], COLOR_BLACK);
             text_size = text.get_size();
 
@@ -128,4 +128,3 @@ class CreditsScreen:
         surface.blit(self.logo, self.logo_pos);
         for text in self.texts:
             text.draw(surface, antialias = True);
-
