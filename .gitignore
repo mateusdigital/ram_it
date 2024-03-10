@@ -1,6 +1,7 @@
 *.pyc
 dist/
 build/
+build-pc-*
 main.spec
 ram_it.spec
 archives/
