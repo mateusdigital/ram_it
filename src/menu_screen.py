@@ -85,7 +85,7 @@ class MenuScreen:
                                         350);
 
         ## AmazingCow
-        self._amazingcow_text = Text(FONT_NAME, FONT_SIZE, -1, -1, "amazingcow - 2016, 2020");
+        self._amazingcow_text = Text(FONT_NAME, FONT_SIZE, -1, -1, "amazingcow - 2016, 2020, 2024");
         amazing_size = self._amazingcow_text.get_size();
         self._amazingcow_text.set_position(wcenter - (amazing_size[0] * 0.5),
                                            GAME_WIN_HEIGHT - (amazing_size[1] + 20));
