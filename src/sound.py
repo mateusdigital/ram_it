@@ -337,7 +337,7 @@ def play_victory_sound():
     grow     = random.randint(200,  250);
 
     gen    = lambda i: _generateTone(min_freq + (i * grow), WAVE_SQUARE, 10, _VOLUME_MED);
-    buffer = np.concatenate(map(gen, range(0, 4)));
+    buffer = np.concatenate(list(map(gen, range(0, 4))));
 
     _play_buffer(CHANNEL_INDEX_OTHER, buffer);
 
@@ -353,7 +353,7 @@ def play_defeat_sound():
     decay    = random.randint(200,  250);
 
     gen    = lambda i: _generateTone(max_freq - (i * decay), WAVE_SQUARE, 10, _VOLUME_MED);
-    buffer = np.concatenate(map(gen, range(0, 4)));
+    buffer = np.concatenate(list(map(gen, range(0, 4))));
 
     _play_buffer(CHANNEL_INDEX_OTHER, buffer);
 
@@ -367,7 +367,7 @@ def play_gameover_sound():
         return;
 
     gen    = lambda i: _generateTone(random.randint(200, 800), WAVE_SAW, 10);
-    buffer = np.concatenate(map(gen, range(0, 8)));
+    buffer = np.concatenate(list(map(gen, range(0, 8))));
 
     _play_buffer(CHANNEL_INDEX_OTHER, buffer);
 
